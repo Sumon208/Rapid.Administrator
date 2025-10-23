@@ -1,0 +1,6 @@
+@RAP.Administrator.API_HostAddress = http://localhost:5237
+
+GET {{RAP.Administrator.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
