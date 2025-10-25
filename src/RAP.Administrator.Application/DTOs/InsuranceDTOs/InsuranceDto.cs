@@ -12,8 +12,8 @@ namespace RAP.Administrator.Application.DTOs.InsuranceDTOs
         public int Id { get; set; }
         public string? InsuranceName { get; set; } = null!;
         public string? Description { get; set; } = null!;
-        public bool? IsDefault { get; set; }
-        public bool? IsDraft { get; set; }
+        public bool IsDefault { get; set; }
+        public bool IsDraft { get; set; }
 
         public int? StatusTypeId { get; set; }
 

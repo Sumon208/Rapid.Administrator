@@ -115,9 +115,9 @@ namespace RAP.Administrator.API.Controllers
                
                 Localizations = dto.Localizations?.Select(l => new InsuranceLocalization
                 {
-                    LanguageId = l.LanguageId,
+                    LanguageId = (int) l.LanguageId,
 
-                    InsuranceId = l.InsuranceId,
+                    InsuranceId = (int)l.InsuranceId,
                    
                     Name = l.Name,
 
@@ -166,7 +166,7 @@ namespace RAP.Administrator.API.Controllers
                 Localizations = dto.Localizations?.Select(l => new InsuranceLocalization
                 {
                     InsuranceId = dto.Id,
-                    LanguageId = l.LanguageId,
+                    LanguageId = (int)l.LanguageId,
                      Name=l.Name
                 }).ToList()
             };
