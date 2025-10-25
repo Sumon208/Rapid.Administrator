@@ -10,11 +10,11 @@ namespace RAP.Administrator.Domain.Models.Insurance
     {
         public int Id { get; set; }
 
-        public int InsuranceId { get; set; }
-        public DateTime ExportedAt { get; set; }
-        public int ExportedByUserId { get; set; }
+        public int? InsuranceId { get; set; }
+        public DateTime? ExportedAt { get; set; }
+        public int? ExportedByUserId { get; set; }
 
-        public string ExportFormat { get; set; } = "Excel"; 
+        public string? ExportFormat { get; set; } = "Excel"; 
 
        
         public InsuranceEntity Insurance { get; set; } = null!;

@@ -10,13 +10,13 @@ namespace RAP.Administrator.Domain.Models.Insurance
     {
         public int Id { get; set; }
 
-        public string InsuranceName { get; set; } = null!;
-        public string Description { get; set; } = null!;
+        public string? InsuranceName { get; set; } = null!;
+        public string? Description { get; set; } = null!;
         public bool IsDefault { get; set; }
         public bool IsDraft { get; set; }
 
-        public int EmployeeId { get; set; }
-        public string Branch { get; set; }
+        public int? EmployeeId { get; set; }
+        public string? Branch { get; set; }
 
         // Navigation Properties
         public EmployeeEntity Employee { get; set; } = null!;

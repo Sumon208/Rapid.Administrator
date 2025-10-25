@@ -1,4 +1,5 @@
-﻿using RAP.Administrator.Application.DTOs.Shared;
+﻿using RAP.Administrator.Application.DTOs.InsuranceDTOs;
+using RAP.Administrator.Application.DTOs.Shared;
 using RAP.Administrator.Application.Interfaces.Repositories;
 using RAP.Administrator.Application.Interfaces.Services;
 using RAP.Administrator.Domain.Models.Insurance;
@@ -24,12 +25,19 @@ namespace RAP.Administrator.Infrastructure.Services
             try
             {
                 var (data, totalCount) = await _insuranceRepository.GetAllAsync(language, pageNumber, pageSize);
+
+                var pagedResponse = new PagedInsuranceResponse
+                {
+                    TotalCount = totalCount,
+                    Data = data
+                };
+
                 return new RequestResponse
                 {
                     StatusCode = "200",
                     Message = "Insurance list fetched successfully",
                     IsSuccess = true,
-                    Data = new { Data = data, TotalCount = totalCount }
+                    Data = pagedResponse   
                 };
             }
             catch (Exception ex)
@@ -42,6 +50,7 @@ namespace RAP.Administrator.Infrastructure.Services
                 };
             }
         }
+
 
         public async Task<RequestResponse> GetByIdAsync(long id)
         {

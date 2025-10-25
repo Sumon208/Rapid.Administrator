@@ -10,8 +10,9 @@ namespace RAP.Administrator.Application.DTOs.InsuranceDTOs
 {
     public class PagedInsuranceResponse
     {
-        public IEnumerable<InsuranceEntity> Data { get; set; } = new List<InsuranceEntity>();
         public int TotalCount { get; set; }
+        public IEnumerable<InsuranceEntity> Data { get; set; } = new List<InsuranceEntity>();
+      
 
     }
 }

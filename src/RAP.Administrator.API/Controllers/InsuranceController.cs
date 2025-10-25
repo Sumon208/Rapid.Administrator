@@ -38,17 +38,17 @@ namespace RAP.Administrator.API.Controllers
                 Description = i.Description,
                 IsDefault = i.IsDefault,
                 IsDraft = i.IsDraft,
-            
+                Branch = i.Branch,
+                EmployeeId = i.EmployeeId,
                 Localizations = i.Localizations?.Select(l => new InsuranceLocalizationDto
                 {
                     InsuranceId = l.InsuranceId,
                     LanguageId = l.LanguageId,
-                    Name = l.Name,
+                    Name = l.Name
                 }).ToList(),
                 Audits = i.Audits?.Select(a => new InsuranceAuditDto
                 {
                     InsuranceId = a.InsuranceId,
-                  
                     ActionUserId = a.ActionUserId,
                     ActionUserAt = a.ActionUserAt,
                     IsDefault = a.IsDefault,
@@ -112,7 +112,10 @@ namespace RAP.Administrator.API.Controllers
                 Description = dto.Description,
                 IsDefault = dto.IsDefault,
                 IsDraft = dto.IsDraft,
-               
+                Branch = dto.Branch,
+                EmployeeId=(int)dto.EmployeeId,
+
+
                 Localizations = dto.Localizations?.Select(l => new InsuranceLocalization
                 {
                     LanguageId = (int) l.LanguageId,

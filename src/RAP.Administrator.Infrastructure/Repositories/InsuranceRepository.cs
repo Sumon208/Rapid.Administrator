@@ -18,12 +18,13 @@ namespace RAP.Administrator.Infrastructure.Repositories
             _context = context;
         }
 
-        
+
         public async Task<(IEnumerable<InsuranceEntity> Data, int TotalCount)> GetAllAsync(
-            string language, int pageNumber = 1, int pageSize = 10)
+       string language, int pageNumber = 1, int pageSize = 10)
         {
             var query = _context.Insurances
                 .Include(i => i.Localizations)
+                .Include(i => i.Audits)       // include audits
                 .AsNoTracking()
                 .OrderByDescending(i => i.Id);
 
@@ -37,7 +38,7 @@ namespace RAP.Administrator.Infrastructure.Repositories
             return (data, totalCount);
         }
 
-    
+
         public async Task<InsuranceEntity?> GetByIdAsync(long id)
         {
             return await _context.Insurances
