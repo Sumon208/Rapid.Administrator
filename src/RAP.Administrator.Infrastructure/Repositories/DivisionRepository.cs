@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RAP.Administrator.Application.Interfaces.Repositories;
-using RAP.Administrator.Domain.Models;
+using RAP.Administrator.Domain.Models.Divisions;
 
 namespace RAP.Administrator.Infrastructure.Repositories
 {

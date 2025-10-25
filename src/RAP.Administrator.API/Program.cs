@@ -19,6 +19,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddScoped<ITransferService, TransferService>();
+
+
+builder.Services.AddScoped<ITransferRepository,TransferRepository>();
+
+
 builder.Services.AddScoped<IInsuranceRepository, InsuranceRepository>();
 
 

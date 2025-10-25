@@ -1,5 +1,5 @@
 ﻿using RAP.Administrator.Application.DTOs.Shared;
-using RAP.Administrator.Domain.Models;
+using RAP.Administrator.Domain.Models.Divisions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

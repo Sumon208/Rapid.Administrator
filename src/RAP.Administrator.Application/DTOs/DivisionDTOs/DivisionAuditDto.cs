@@ -11,8 +11,8 @@ namespace RAP.Administrator.Application.DTOs.DivisionDTOs
         public long DivisionId { get; set; }
         public short? ActionTypeId { get; set; }
         public string? ActionTypeName { get; set; }   // from ActionTypes table
-        public long ActionUserId { get; set; }
-        public DateTime ActionAt { get; set; }
+        public long? ActionUserId { get; set; }
+        public DateTime? ActionAt { get; set; }
 
         public bool IsDefault { get; set; }
         public short? StatusTypeId { get; set; }

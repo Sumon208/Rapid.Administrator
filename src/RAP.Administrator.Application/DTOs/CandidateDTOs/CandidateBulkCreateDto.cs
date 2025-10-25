@@ -5,6 +5,6 @@ namespace RAP.Administrator.Application.DTOs.CandidateDTOs
 {
     public class CandidateBulkCreateDto
     {
-        public List<CandidateCreateDto> Candidates { get; set; }
+        public List<CandidateCreateDto>? Candidates { get; set; }
     }
 }

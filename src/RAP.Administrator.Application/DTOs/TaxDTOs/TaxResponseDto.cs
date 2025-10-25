@@ -1,4 +1,4 @@
-﻿using RAP.Domain.Models;
+﻿using RAP.Administrator.Domain.Models.Tax;
 using System;
 
 namespace RAP.Administrator.Application.DTOs

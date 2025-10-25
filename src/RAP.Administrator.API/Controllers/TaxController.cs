@@ -3,7 +3,7 @@ using RAP.Administrator.Application.DTOs;
 using RAP.Administrator.Application.DTOs.DivisionDTOs;
 using RAP.Administrator.Application.DTOs.Shared;
 using RAP.Administrator.Application.Interfaces.Services;
-using RAP.Administrator.Domain.Models;
+using RAP.Administrator.Domain.Models.Tax;
 using RAP.Administrator.Infrastructure.Services;
 using System.Linq;
 using System.Threading.Tasks;

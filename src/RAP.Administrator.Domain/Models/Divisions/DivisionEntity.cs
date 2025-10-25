@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace RAP.Administrator.Domain.Models
+namespace RAP.Administrator.Domain.Models.Divisions
 {
     public class Division
     {
-        public long Id { get; set; } 
+        public long Id { get; set; }
 
         public string Code { get; set; } = string.Empty;
         public string DivisionName { get; set; } = string.Empty;
@@ -17,12 +17,12 @@ namespace RAP.Administrator.Domain.Models
 
         public ICollection<DivisionLocalization>? Localizations { get; set; }
         public ICollection<DivisionAudit>? Audits { get; set; }
-        public ICollection<DivisionExport>? Exports { get; set; } 
+        public ICollection<DivisionExport>? Exports { get; set; }
     }
 
     public class DivisionLocalization
     {
-        public long Id { get; set; } 
+        public long Id { get; set; }
         public long DivisionId { get; set; }
         public Division Division { get; set; } = null!;
 
@@ -43,7 +43,7 @@ namespace RAP.Administrator.Domain.Models
         public long DivisionId { get; set; }
         public Division Division { get; set; } = null!;
 
-       
+
 
         public string ActionTypeName { get; set; } = null!;
 
@@ -58,14 +58,14 @@ namespace RAP.Administrator.Domain.Models
 
     public class ActionType
     {
-        public long Id { get; set; } 
+        public long Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
     }
 
     public class DivisionExport
     {
-        public long Id { get; set; } 
+        public long Id { get; set; }
         public long DivisionId { get; set; }
         public Division Division { get; set; } = null!;
 

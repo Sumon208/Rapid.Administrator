@@ -2,9 +2,9 @@
 using RAP.Administrator.Application.DTOs.Shared;
 using RAP.Administrator.Application.Interfaces.Repositories;
 using RAP.Administrator.Application.Interfaces.Services;
-using RAP.Administrator.Domain.Models;
+using RAP.Administrator.Domain.Models.Tax;
 using RAP.Administrator.Infrastructure.Repositories;
-using RAP.Domain.Models;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;

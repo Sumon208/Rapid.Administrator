@@ -2,7 +2,7 @@
 using RAP.Administrator.Application.DTOs.DivisionDTOs;
 using RAP.Administrator.Application.DTOs.Shared;
 using RAP.Administrator.Application.Interfaces.Services;
-using RAP.Administrator.Domain.Models;
+using RAP.Administrator.Domain.Models.Divisions;
 
 namespace RAP.Administrator.API.Controllers
 {

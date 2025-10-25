@@ -1,6 +1,6 @@
 ﻿using RAP.Administrator.Application.DTOs;
 using RAP.Administrator.Application.DTOs.Shared;
-using RAP.Administrator.Domain.Models;
+using RAP.Administrator.Domain.Models.Tax;
 using System.Threading.Tasks;
 
 namespace RAP.Administrator.Application.Interfaces.Services

@@ -1,7 +1,7 @@
 ﻿using RAP.Administrator.Domain.Models;
 using System;
 
-namespace RAP.Domain.Models
+namespace RAP.Administrator.Domain.Models.Tax
 {
     public class TaxAuditEntity
     {

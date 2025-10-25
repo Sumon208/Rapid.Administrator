@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RAP.Administrator.Application.Interfaces.Repositories;
-using RAP.Administrator.Domain.Models;
+using RAP.Administrator.Domain.Models.ShiftType;
 using System;
 using System.Collections.Generic;
 using System.Linq;

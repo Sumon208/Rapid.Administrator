@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RAP.Administrator.Domain.Models;
 using RAP.Administrator.Domain.Models.CandidateSelection;
+using RAP.Administrator.Domain.Models.Divisions;
 using RAP.Administrator.Domain.Models.Insurance;
-using RAP.Domain.Models;
+using RAP.Administrator.Domain.Models.ShiftType;
+using RAP.Administrator.Domain.Models.Tax;
+using RAP.Administrator.Domain.Models.Transfer;
 
 public class ApplicationDbContext : DbContext
 {
@@ -33,13 +35,24 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<Position> Positions { get; set; }
     public DbSet<Team> Teams { get; set; }
-    public DbSet<RAP.Administrator.Domain.Models.ActionType> CandidateActionTypes { get; set; }
+    public DbSet<RAP.Administrator.Domain.Models.Divisions.ActionType> CandidateActionTypes { get; set; }
     // Insurances tables
     public DbSet<EmployeeEntity> Employees { get; set; }
     public DbSet<InsuranceEntity> Insurances { get; set; }
     public DbSet<InsuranceAuditEntity> InsuranceAudits { get; set; }
     public DbSet<InsuranceLocalization> InsuranceLocalizations { get; set; }
     public DbSet<ExportInsuranceEntity> ExportInsurances { get; set; }
+    // Transfer Tables
+    public DbSet<TransferEntity> Transfers { get; set; }
+    public DbSet<TransferLocalization> TransferLocalizations { get; set; }
+    public DbSet<TransferAudit> TransferAudits { get; set; }
+    public DbSet<TransferExport> TransferExports { get; set; }
+
+    // Transfer Dropdown Tables
+    public DbSet<TransferFromLocationEntity> TransferFromLocations { get; set; }
+    public DbSet<TransferToLocationEntity> TransferToLocations { get; set; }
+    public DbSet<TransferBranchEntity> TransferBranches { get; set; }
+    public DbSet<TransferIqamaEntity> TransferIqamas { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -64,13 +77,23 @@ public class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<Position>().ToTable("CandidatePositions");
         modelBuilder.Entity<Team>().ToTable("CandidateTeams");
-        modelBuilder.Entity<RAP.Administrator.Domain.Models.ActionType>().ToTable("CandidateActionTypes");
+        modelBuilder.Entity<RAP.Administrator.Domain.Models.Divisions.ActionType>().ToTable("CandidateActionTypes");
         //  Table naming convention 
         modelBuilder.Entity<EmployeeEntity>().ToTable("Employee");
         modelBuilder.Entity<InsuranceEntity>().ToTable("Insurance");
         modelBuilder.Entity<InsuranceAuditEntity>().ToTable("InsuranceAudit");
         modelBuilder.Entity<InsuranceLocalization>().ToTable("InsuranceLocalization");
         modelBuilder.Entity<ExportInsuranceEntity>().ToTable("ExportInsurance");
+        // Transfer Tables 
+        modelBuilder.Entity<TransferEntity>().ToTable("Transfers");
+        modelBuilder.Entity<TransferLocalization>().ToTable("TransferLocalizations");
+        modelBuilder.Entity<TransferAudit>().ToTable("TransferAudits");
+        modelBuilder.Entity<TransferExport>().ToTable("TransferExports");
+
+        modelBuilder.Entity<TransferFromLocationEntity>().ToTable("TransferFromLocations");
+        modelBuilder.Entity<TransferToLocationEntity>().ToTable("TransferToLocations");
+        modelBuilder.Entity<TransferBranchEntity>().ToTable("TransferBranches");
+        modelBuilder.Entity<TransferIqamaEntity>().ToTable("TransferIqamas");
         // Primary Keys
         modelBuilder.Entity<Division>().HasKey(d => d.Id);
         modelBuilder.Entity<DivisionLocalization>().HasKey(l => l.Id);
@@ -88,7 +111,7 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<CandidateExport>().HasKey(e => e.Id);
         modelBuilder.Entity<Position>().HasKey(p => p.Id);
         modelBuilder.Entity<Team>().HasKey(t => t.Id);
-        modelBuilder.Entity<RAP.Administrator.Domain.Models.ActionType>().HasKey(at => at.Id);
+        modelBuilder.Entity<RAP.Administrator.Domain.Models.Divisions.ActionType>().HasKey(at => at.Id);
 
         //  Key configurations
         modelBuilder.Entity<EmployeeEntity>().HasKey(e => e.Id);
@@ -96,6 +119,16 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<InsuranceAuditEntity>().HasKey(a => a.Id);
         modelBuilder.Entity<InsuranceLocalization>().HasKey(l => l.Id);
         modelBuilder.Entity<ExportInsuranceEntity>().HasKey(e => e.Id);
+
+        modelBuilder.Entity<TransferEntity>().HasKey(t => t.Id);
+        modelBuilder.Entity<TransferLocalization>().HasKey(l => l.Id);
+        modelBuilder.Entity<TransferAudit>().HasKey(a => a.Id);
+        modelBuilder.Entity<TransferExport>().HasKey(e => e.Id);
+
+        modelBuilder.Entity<TransferFromLocationEntity>().HasKey(f => f.Id);
+        modelBuilder.Entity<TransferToLocationEntity>().HasKey(t => t.Id);
+        modelBuilder.Entity<TransferBranchEntity>().HasKey(b => b.Id);
+        modelBuilder.Entity<TransferIqamaEntity>().HasKey(i => i.Id);
 
         modelBuilder.Entity<TaxEntity>()
         .Property(t => t.OpeningBalance)
@@ -128,7 +161,7 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(e => e.DivisionId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // Relations: ShiftType
+        //  ShiftType
         modelBuilder.Entity<ShiftType>()
             .HasMany(s => s.Localizations)
             .WithOne(l => l.ShiftType)
@@ -172,32 +205,51 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(a => a.ActionTypeId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        //  Employee → Insurance (One-to-Many)
+        //  Employee Insurance (One-to-Many)
         modelBuilder.Entity<InsuranceEntity>()
             .HasOne(i => i.Employee)
             .WithMany(e => e.Insurances)
             .HasForeignKey(i => i.EmployeeId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        //  Insurance → InsuranceAudit (One-to-Many)
+        //  Insuranc InsuranceAudit (One-to-Many)
         modelBuilder.Entity<InsuranceAuditEntity>()
             .HasOne(a => a.Insurance)
             .WithMany(i => i.Audits)
             .HasForeignKey(a => a.InsuranceId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // Insurance → InsuranceLocalization (One-to-Many)
+        // Insurance InsuranceLocalization (One-to-Many)
         modelBuilder.Entity<InsuranceLocalization>()
             .HasOne(l => l.Insurance)
             .WithMany(i => i.Localizations)
             .HasForeignKey(l => l.InsuranceId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        //  Insurance → ExportInsurance (One-to-Many)
+        //  Insurance  ExportInsurance (One-to-Many)
         modelBuilder.Entity<ExportInsuranceEntity>()
             .HasOne(e => e.Insurance)
             .WithMany(i => i.ExportInsurances)
             .HasForeignKey(e => e.InsuranceId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Transfer
+        modelBuilder.Entity<TransferEntity>()
+        .HasMany(t => t.Localizations)
+        .WithOne(l => l.Transfer)
+        .HasForeignKey(l => l.TransferId)
+        .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<TransferEntity>()
+            .HasMany(t => t.Audits)
+            .WithOne(a => a.Transfer)
+            .HasForeignKey(a => a.TransferId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<TransferEntity>()
+            .HasMany(t => t.Exports)
+            .WithOne(e => e.Transfer)
+            .HasForeignKey(e => e.TransferId)
             .OnDelete(DeleteBehavior.Cascade);
 
         base.OnModelCreating(modelBuilder);

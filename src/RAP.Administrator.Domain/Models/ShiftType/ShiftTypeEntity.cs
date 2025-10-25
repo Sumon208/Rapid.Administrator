@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace RAP.Administrator.Domain.Models
+namespace RAP.Administrator.Domain.Models.ShiftType
 {
     public class ShiftType
     {
@@ -9,16 +9,16 @@ namespace RAP.Administrator.Domain.Models
 
         public string Name { get; set; } = string.Empty;
 
-      
+
         public string Color { get; set; } = string.Empty;
 
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
 
-       
+
         public DateTime BreakTime { get; set; }
 
-       
+
         public string Status { get; set; } = "Active";
 
         public bool IsDefault { get; set; }
@@ -55,7 +55,7 @@ namespace RAP.Administrator.Domain.Models
         public long ActionUserId { get; set; }
         public DateTime ActionAt { get; set; }
 
-      
+
         public string Name { get; set; } = string.Empty;
         public string Color { get; set; } = string.Empty;
         public DateTime StartTime { get; set; }

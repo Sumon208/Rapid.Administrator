@@ -1,12 +1,12 @@
 ﻿using RAP.Administrator.Application.DTOs.Shared;
 using RAP.Administrator.Application.Interfaces.Repositories;
 using RAP.Administrator.Application.Interfaces.Services;
-using RAP.Administrator.Domain.Models;
-using RAP.Administrator.Application.DTOs.Shared; 
+using RAP.Administrator.Application.DTOs.Shared;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using RAP.Administrator.Application.DTOs.DivisionDTOs;
+using RAP.Administrator.Domain.Models.Divisions;
 
 namespace RAP.Administrator.Infrastructure.Services
 {

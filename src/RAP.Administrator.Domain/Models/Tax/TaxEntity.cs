@@ -1,8 +1,7 @@
-﻿using RAP.Domain.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace RAP.Administrator.Domain.Models
+namespace RAP.Administrator.Domain.Models.Tax
 {
     public class TaxEntity
     {

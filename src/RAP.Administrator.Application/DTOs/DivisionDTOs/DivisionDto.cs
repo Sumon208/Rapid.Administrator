@@ -9,8 +9,8 @@ namespace RAP.Administrator.Application.DTOs.DivisionDTOs
     public class DivisionDto
     {
         public long Id { get; set; }
-        public string Code { get; set; } = string.Empty;
-        public string DivisionName { get; set; } = string.Empty;
+        public string? Code { get; set; } = string.Empty;
+        public string? DivisionName { get; set; } = string.Empty;
         public string? Region { get; set; }
         public string? Description { get; set; }
         public short? StatusTypeId { get; set; }

@@ -1,5 +1,4 @@
-﻿using RAP.Administrator.Domain.Models;
-using RAP.Domain.Models;
+﻿using RAP.Administrator.Domain.Models.Tax;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

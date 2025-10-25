@@ -20,7 +20,7 @@ namespace RAP.Administrator.Application.DTOs.InsuranceDTOs
         public int? EmployeeId { get; set; }
         public string? Branch { get; set; } = null!;
 
-        // Navigation DTOs
+        
        
         public ICollection<InsuranceLocalizationDto>? Localizations { get; set; }
         public ICollection<InsuranceAuditDto>? Audits { get; set; }

@@ -74,7 +74,7 @@ namespace RAP.Administrator.API.Controllers
                 StatusId = candidate.StatusId,
                 Localizations = candidate.Localizations?.Select(l => new CandidateLocalizationDto
                 {
-                    LanguageId = l.LanguageId,
+                    LanguageId = (int)l.LanguageId,
                     LocalizedName = l.LocalizedName,
                     LocalizedDescription = l.LocalizedDescription
                 }).ToList(),
