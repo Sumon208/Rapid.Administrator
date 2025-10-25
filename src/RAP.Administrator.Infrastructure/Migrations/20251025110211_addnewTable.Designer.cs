@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace RAP.Administrator.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251025110211_addnewTable")]
+    partial class addnewTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -362,162 +365,6 @@ namespace RAP.Administrator.Infrastructure.Migrations
                     b.ToTable("DivisionLocalizations", (string)null);
                 });
 
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.Insurance.EmployeeEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Employee", (string)null);
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.Insurance.ExportInsuranceEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ExportFormat")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("ExportedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ExportedByUserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("InsuranceId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InsuranceId");
-
-                    b.ToTable("ExportInsurance", (string)null);
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.Insurance.InsuranceAuditEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ActionTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("ActionUserAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ActionUserId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("BranchId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("EmployeeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("InsuranceId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("InsuranceName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDefault")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDraft")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("StatusId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InsuranceId");
-
-                    b.ToTable("InsuranceAudit", (string)null);
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.Insurance.InsuranceEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Branch")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("InsuranceName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDefault")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDraft")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.ToTable("Insurance", (string)null);
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.Insurance.InsuranceLocalization", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("InsuranceId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("LanguageId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InsuranceId");
-
-                    b.ToTable("InsuranceLocalization", (string)null);
-                });
-
             modelBuilder.Entity("RAP.Administrator.Domain.Models.ShiftType", b =>
                 {
                     b.Property<long>("Id")
@@ -829,21 +676,17 @@ namespace RAP.Administrator.Infrastructure.Migrations
 
             modelBuilder.Entity("RAP.Administrator.Domain.Models.CandidateSelection.CandidateEntity", b =>
                 {
-                    b.HasOne("RAP.Administrator.Domain.Models.CandidateSelection.Position", "Position")
+                    b.HasOne("RAP.Administrator.Domain.Models.CandidateSelection.Position", null)
                         .WithMany("CandidateSelections")
                         .HasForeignKey("PositionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RAP.Administrator.Domain.Models.CandidateSelection.Team", "Team")
+                    b.HasOne("RAP.Administrator.Domain.Models.CandidateSelection.Team", null)
                         .WithMany("CandidateSelections")
                         .HasForeignKey("TeamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Position");
-
-                    b.Navigation("Team");
                 });
 
             modelBuilder.Entity("RAP.Administrator.Domain.Models.CandidateSelection.CandidateExport", b =>
@@ -899,50 +742,6 @@ namespace RAP.Administrator.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Division");
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.Insurance.ExportInsuranceEntity", b =>
-                {
-                    b.HasOne("RAP.Administrator.Domain.Models.Insurance.InsuranceEntity", "Insurance")
-                        .WithMany("ExportInsurances")
-                        .HasForeignKey("InsuranceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Insurance");
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.Insurance.InsuranceAuditEntity", b =>
-                {
-                    b.HasOne("RAP.Administrator.Domain.Models.Insurance.InsuranceEntity", "Insurance")
-                        .WithMany("Audits")
-                        .HasForeignKey("InsuranceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Insurance");
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.Insurance.InsuranceEntity", b =>
-                {
-                    b.HasOne("RAP.Administrator.Domain.Models.Insurance.EmployeeEntity", "Employee")
-                        .WithMany("Insurances")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.Insurance.InsuranceLocalization", b =>
-                {
-                    b.HasOne("RAP.Administrator.Domain.Models.Insurance.InsuranceEntity", "Insurance")
-                        .WithMany("Localizations")
-                        .HasForeignKey("InsuranceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Insurance");
                 });
 
             modelBuilder.Entity("RAP.Administrator.Domain.Models.ShiftTypeAudit", b =>
@@ -1014,20 +813,6 @@ namespace RAP.Administrator.Infrastructure.Migrations
                     b.Navigation("Audits");
 
                     b.Navigation("Exports");
-
-                    b.Navigation("Localizations");
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.Insurance.EmployeeEntity", b =>
-                {
-                    b.Navigation("Insurances");
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.Insurance.InsuranceEntity", b =>
-                {
-                    b.Navigation("Audits");
-
-                    b.Navigation("ExportInsurances");
 
                     b.Navigation("Localizations");
                 });

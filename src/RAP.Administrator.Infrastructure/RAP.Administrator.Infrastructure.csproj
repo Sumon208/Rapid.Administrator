@@ -23,8 +23,6 @@
 	<ItemGroup>
 
 	  <ProjectReference Include="..\RAP.Administrator.Application\RAP.Administrator.Application.csproj" />
-
-	  <ProjectReference Include="..\RAP.Administrator.Domain\RAP.Administrator.Domain.csproj" />
   </ItemGroup>
 
 </Project>

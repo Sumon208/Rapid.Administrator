@@ -19,6 +19,16 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddScoped<IInsuranceRepository, InsuranceRepository>();
+
+
+builder.Services.AddScoped<IInsuranceService,InsuranceService>();
+
+
+builder.Services.AddScoped<ICandidateRepository, CandidateRepository>();
+
+builder.Services.AddScoped<ICandidateService,CandidateService>();
+
 builder.Services.AddScoped<IShiftTypeRepository, ShiftTypeRepository>();
 
 builder.Services.AddScoped<IShiftTypeService,ShiftTypeService>();
