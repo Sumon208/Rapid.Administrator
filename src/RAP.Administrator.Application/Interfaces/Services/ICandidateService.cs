@@ -13,7 +13,7 @@ namespace RAP.Administrator.Application.Interfaces.Services
         Task<RequestResponse> CreateBulkAsync(IEnumerable<CandidateEntity> entities, int userId);
         Task<RequestResponse> UpdateAsync(CandidateEntity entity, int userId);
         Task<RequestResponse> DeleteAsync(int id, int userId);
-        Task<RequestResponse> GetTemplateDataAsync(int? languageId = null);
+        Task<RequestResponse> GetTemplateDataAsync();
         Task<RequestResponse> GetAllGalleryAsync();
         Task<RequestResponse> GetAllAuditsAsync(int candidateId);
     }

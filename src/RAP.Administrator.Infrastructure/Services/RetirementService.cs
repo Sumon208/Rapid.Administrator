@@ -1,65 +1,66 @@
-﻿using RAP.Administrator.Application.DTOs.CandidateDTOs;
+﻿using RAP.Administrator.Application.DTOs.RetirementDTOs;
 using RAP.Administrator.Application.DTOs.Shared;
 using RAP.Administrator.Application.Interfaces.Repositories;
 using RAP.Administrator.Application.Interfaces.Services;
-using RAP.Administrator.Domain.Models.CandidateSelection;
+using RAP.Administrator.Domain.Models.Retirement;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace RAP.Administrator.Infrastructure.Services
 {
-    public class CandidateService : ICandidateService
+    public class RetirementService : IRetirementService
     {
-        private readonly ICandidateRepository _candidateRepository;
+        private readonly IRetirementRepository _retirementRepository;
 
-        public CandidateService(ICandidateRepository candidateRepository)
+        public RetirementService(IRetirementRepository retirementRepository)
         {
-            _candidateRepository = candidateRepository;
+            _retirementRepository = retirementRepository;
         }
 
-        public async Task<RequestResponse> GetAllAsync(int pageNumber = 1, int pageSize = 10, int? languageId = null)
+        public async Task<RequestResponse> GetAllAsync(string language, int pageNumber = 1, int pageSize = 10)
         {
             try
             {
-                var (data, totalCount) = await _candidateRepository.GetAllAsync(pageNumber, pageSize, languageId);
+                var (data, totalCount) = await _retirementRepository.GetAllAsync(language, pageNumber, pageSize);
 
-                var pagedResponse = new PagedCandidateResponse
+                var pagedResponse = new PagedRetirementResponse
                 {
-                    Data = data,
-                    TotalCount = totalCount
+                    TotalCount = totalCount,
+                    Data = data
                 };
 
                 return new RequestResponse
                 {
                     StatusCode = "200",
-                    Message = "Candidate list fetched successfully",
+                    Message = "Retirement list fetched successfully",
                     IsSuccess = true,
-                    Data = pagedResponse
+                    Data = pagedResponse  
                 };
+
             }
             catch (Exception ex)
             {
                 return new RequestResponse
                 {
                     StatusCode = "500",
-                    Message = $"Error fetching candidates: {ex.Message}",
+                    Message = $"Error fetching retirement list: {ex.Message}",
                     IsSuccess = false
                 };
             }
         }
 
-        public async Task<RequestResponse> GetByIdAsync(int id, int? languageId = null)
+        public async Task<RequestResponse> GetByIdAsync(long id)
         {
             try
             {
-                var candidate = await _candidateRepository.GetByIdAsync(id, languageId);
-                if (candidate == null)
+                var retirement = await _retirementRepository.GetByIdAsync(id);
+                if (retirement == null)
                 {
                     return new RequestResponse
                     {
                         StatusCode = "404",
-                        Message = "Candidate not found",
+                        Message = "Retirement not found",
                         IsSuccess = false
                     };
                 }
@@ -67,9 +68,9 @@ namespace RAP.Administrator.Infrastructure.Services
                 return new RequestResponse
                 {
                     StatusCode = "200",
-                    Message = "Candidate retrieved successfully",
+                    Message = "Retirement retrieved successfully",
                     IsSuccess = true,
-                    Data = candidate
+                    Data = retirement
                 };
             }
             catch (Exception ex)
@@ -77,21 +78,21 @@ namespace RAP.Administrator.Infrastructure.Services
                 return new RequestResponse
                 {
                     StatusCode = "500",
-                    Message = $"Error fetching candidate: {ex.Message}",
+                    Message = $"Error fetching retirement: {ex.Message}",
                     IsSuccess = false
                 };
             }
         }
 
-        public async Task<RequestResponse> CreateAsync(CandidateEntity entity, int userId)
+        public async Task<RequestResponse> CreateAsync(RetirementEntity entity, int userId, string language)
         {
             try
             {
-                var created = await _candidateRepository.CreateAsync(entity, userId);
+                var created = await _retirementRepository.CreateAsync(entity, userId, language);
                 return new RequestResponse
                 {
                     StatusCode = "201",
-                    Message = "Candidate created successfully",
+                    Message = "Retirement created successfully",
                     IsSuccess = true,
                     Data = created
                 };
@@ -101,21 +102,21 @@ namespace RAP.Administrator.Infrastructure.Services
                 return new RequestResponse
                 {
                     StatusCode = "500",
-                    Message = $"Error creating candidate: {ex.Message}",
+                    Message = $"Error creating retirement: {ex.Message}",
                     IsSuccess = false
                 };
             }
         }
 
-        public async Task<RequestResponse> CreateBulkAsync(IEnumerable<CandidateEntity> entities, int userId)
+        public async Task<RequestResponse> CreateBulkAsync(IEnumerable<RetirementEntity> entities, int userId, string language)
         {
             try
             {
-                var count = await _candidateRepository.CreateBulkAsync(entities, userId);
+                var count = await _retirementRepository.CreateBulkAsync(entities, userId, language);
                 return new RequestResponse
                 {
                     StatusCode = "201",
-                    Message = $"{count} candidates created successfully",
+                    Message = $"{count} retirements created successfully",
                     IsSuccess = true,
                     Data = count
                 };
@@ -131,18 +132,18 @@ namespace RAP.Administrator.Infrastructure.Services
             }
         }
 
-        public async Task<RequestResponse> UpdateAsync(CandidateEntity entity, int userId)
+        public async Task<RequestResponse> UpdateAsync(RetirementEntity entity, int userId, string language)
         {
             try
             {
-                var success = await _candidateRepository.UpdateAsync(entity, userId);
+                var success = await _retirementRepository.UpdateAsync(entity, userId, language);
 
                 if (!success)
                 {
                     return new RequestResponse
                     {
                         StatusCode = "400",
-                        Message = "Update failed or candidate not found",
+                        Message = "Update failed or retirement not found",
                         IsSuccess = false
                     };
                 }
@@ -150,7 +151,7 @@ namespace RAP.Administrator.Infrastructure.Services
                 return new RequestResponse
                 {
                     StatusCode = "200",
-                    Message = "Candidate updated successfully",
+                    Message = "Retirement updated successfully",
                     IsSuccess = true,
                     Data = entity
                 };
@@ -160,23 +161,23 @@ namespace RAP.Administrator.Infrastructure.Services
                 return new RequestResponse
                 {
                     StatusCode = "500",
-                    Message = $"Error updating candidate: {ex.Message}",
+                    Message = $"Error updating retirement: {ex.Message}",
                     IsSuccess = false
                 };
             }
         }
 
-        public async Task<RequestResponse> DeleteAsync(int id, int userId)
+        public async Task<RequestResponse> DeleteAsync(long id, int userId, string language)
         {
             try
             {
-                var deleted = await _candidateRepository.DeleteAsync(id, userId);
+                var deleted = await _retirementRepository.DeleteAsync(id, userId, language);
                 if (!deleted)
                 {
                     return new RequestResponse
                     {
                         StatusCode = "404",
-                        Message = "Candidate not found or already deleted",
+                        Message = "Retirement not found or already deleted",
                         IsSuccess = false
                     };
                 }
@@ -184,7 +185,7 @@ namespace RAP.Administrator.Infrastructure.Services
                 return new RequestResponse
                 {
                     StatusCode = "200",
-                    Message = "Candidate deleted successfully",
+                    Message = "Retirement deleted successfully",
                     IsSuccess = true
                 };
             }
@@ -193,7 +194,7 @@ namespace RAP.Administrator.Infrastructure.Services
                 return new RequestResponse
                 {
                     StatusCode = "500",
-                    Message = $"Error deleting candidate: {ex.Message}",
+                    Message = $"Error deleting retirement: {ex.Message}",
                     IsSuccess = false
                 };
             }
@@ -203,7 +204,7 @@ namespace RAP.Administrator.Infrastructure.Services
         {
             try
             {
-                var data = await _candidateRepository.GetTemplateDataAsync();
+                var data = await _retirementRepository.GetTemplateDataAsync();
                 return new RequestResponse
                 {
                     StatusCode = "200",
@@ -227,7 +228,7 @@ namespace RAP.Administrator.Infrastructure.Services
         {
             try
             {
-                var data = await _candidateRepository.GetAllGalleryAsync();
+                var data = await _retirementRepository.GetAllGalleryAsync();
                 return new RequestResponse
                 {
                     StatusCode = "200",
@@ -247,11 +248,11 @@ namespace RAP.Administrator.Infrastructure.Services
             }
         }
 
-        public async Task<RequestResponse> GetAllAuditsAsync(int candidateId)
+        public async Task<RequestResponse> GetAllAuditsAsync(long retirementId)
         {
             try
             {
-                var audits = await _candidateRepository.GetAllAuditsAsync(candidateId);
+                var audits = await _retirementRepository.GetAllAuditsAsync(retirementId);
                 return new RequestResponse
                 {
                     StatusCode = "200",

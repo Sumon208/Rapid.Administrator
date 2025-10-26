@@ -2,6 +2,7 @@
 using RAP.Administrator.Domain.Models.CandidateSelection;
 using RAP.Administrator.Domain.Models.Divisions;
 using RAP.Administrator.Domain.Models.Insurance;
+using RAP.Administrator.Domain.Models.Retirement;
 using RAP.Administrator.Domain.Models.ShiftType;
 using RAP.Administrator.Domain.Models.Tax;
 using RAP.Administrator.Domain.Models.Transfer;
@@ -54,6 +55,12 @@ public class ApplicationDbContext : DbContext
     public DbSet<TransferBranchEntity> TransferBranches { get; set; }
     public DbSet<TransferIqamaEntity> TransferIqamas { get; set; }
 
+    // Retirement Tables
+    public DbSet<RetirementEntity> Retirements { get; set; }
+    public DbSet<RetirementLocalization> RetirementLocalizations { get; set; }
+    public DbSet<RetirementAudit> RetirementAudits { get; set; }
+    public DbSet<RetirementExport> RetirementExports { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Table mappings
@@ -94,6 +101,12 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<TransferToLocationEntity>().ToTable("TransferToLocations");
         modelBuilder.Entity<TransferBranchEntity>().ToTable("TransferBranches");
         modelBuilder.Entity<TransferIqamaEntity>().ToTable("TransferIqamas");
+
+        modelBuilder.Entity<RetirementEntity>().ToTable("Retirements");
+        modelBuilder.Entity<RetirementLocalization>().ToTable("RetirementLocalizations");
+        modelBuilder.Entity<RetirementAudit>().ToTable("RetirementAudits");
+        modelBuilder.Entity<RetirementExport>().ToTable("RetirementExports");
+
         // Primary Keys
         modelBuilder.Entity<Division>().HasKey(d => d.Id);
         modelBuilder.Entity<DivisionLocalization>().HasKey(l => l.Id);
@@ -130,6 +143,12 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<TransferBranchEntity>().HasKey(b => b.Id);
         modelBuilder.Entity<TransferIqamaEntity>().HasKey(i => i.Id);
 
+        modelBuilder.Entity<RetirementEntity>().HasKey(r => r.Id);
+
+        modelBuilder.Entity<RetirementLocalization>().HasKey(l => l.Id);
+
+        modelBuilder.Entity<RetirementAudit>().HasKey(a => a.Id);
+        modelBuilder.Entity<RetirementExport>().HasNoKey(); 
         modelBuilder.Entity<TaxEntity>()
         .Property(t => t.OpeningBalance)
         .HasColumnType("decimal(18,4)"); 
@@ -251,6 +270,27 @@ public class ApplicationDbContext : DbContext
             .WithOne(e => e.Transfer)
             .HasForeignKey(e => e.TransferId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        // Retirement Localizations (One-to-Many)
+        modelBuilder.Entity<RetirementEntity>()
+            .HasMany(r => r.Localizations)
+            .WithOne(l => l.Retirement)
+            .HasForeignKey(l => l.RetirementId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+       // Retirement Audits (One-to-Many)
+        modelBuilder.Entity<RetirementEntity>()
+            .HasMany(r => r.Audits)
+            .WithOne(a => a.Retirement)
+            .HasForeignKey(a => a.RetirementId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Employee Retirement (One-to-Many)
+        modelBuilder.Entity<RetirementEntity>()
+            .HasOne<EmployeeEntity>() 
+            .WithMany(e => e.Retirement)
+            .HasForeignKey("EmployeeId") 
+            .OnDelete(DeleteBehavior.Restrict);
 
         base.OnModelCreating(modelBuilder);
     }

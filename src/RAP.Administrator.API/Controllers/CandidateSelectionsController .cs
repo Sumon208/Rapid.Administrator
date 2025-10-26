@@ -1,13 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using RAP.Administrator.Application.DTOs.CandidateDTOs;
-using RAP.Administrator.Application.DTOs.CandidateDTOs.RAP.Administrator.Application.DTOs.CandidateDTOs;
 using RAP.Administrator.Application.DTOs.Shared;
+using RAP.Administrator.Application.DTOs.CandidateDTOs;
 using RAP.Administrator.Application.Interfaces.Services;
 using RAP.Administrator.Domain.Models.CandidateSelection;
+using System.Linq;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using RAP.Administrator.Application.DTOs.CandidateDTOs.RAP.Administrator.Application.DTOs.CandidateDTOs;
 
 namespace RAP.Administrator.API.Controllers
 {
-    [Route("api/candidate-selections")]
+    [Route("api/[controller]")]
     [ApiController]
     public class CandidateSelectionsController : ControllerBase
     {
@@ -18,26 +21,35 @@ namespace RAP.Administrator.API.Controllers
             _candidateService = candidateService;
         }
 
+
         [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetAll([FromQuery] int? languageId = 1,[FromQuery] int pageNumber = 1,
+          [FromQuery] int pageSize = 10)
         {
-            var response = await _candidateService.GetAllAsync(pageNumber, pageSize);
+            var response = await _candidateService.GetAllAsync(pageNumber, pageSize, languageId);
+
             if (!response.IsSuccess)
                 return StatusCode(int.Parse(response.StatusCode), response.Message);
 
-            var candidates = response.Data as IEnumerable<CandidateEntity>;
-            if (candidates == null)
+            var pagedData = response.Data as PagedCandidateResponse;
+            if (pagedData == null)
                 return StatusCode(500, "Invalid data format");
 
-            var result = candidates.Select(c => new CandidateListDto
+            var result = pagedData.Data.Select(c => new CandidateListDto
             {
                 Id = c.Id,
                 Code = c.Code,
                 Name = c.Name,
                 PositionName = c.Position?.PositionName,
                 TeamName = c.Team?.TeamName,
-                IsDefault = c.IsDefault,
                 StatusId = c.StatusId,
+                IsDefault = c.IsDefault,
+                Localizations = c.Localizations?.Select(l => new CandidateLocalizationDto
+                {
+                    LanguageId = (int)l.LanguageId,
+                    LocalizedName = l.LocalizedName,
+                    LocalizedDescription = l.LocalizedDescription
+                }).ToList(),
                 Audits = c.Audits?.Select(a => new CandidateAuditDto
                 {
                     CandidateId = a.CandidateId,
@@ -47,13 +59,20 @@ namespace RAP.Administrator.API.Controllers
                 }).ToList()
             }).ToList();
 
-            return Ok(new { TotalCount = candidates.Count(), Data = result });
+            return Ok(new
+            {
+                TotalCount = pagedData.TotalCount,
+                Data = result
+            });
         }
 
+
+
+
         [HttpGet("GetSingle")]
-        public async Task<IActionResult> GetSingle([FromQuery] int id)
+        public async Task<IActionResult> GetSingle([FromQuery] int id, [FromQuery] int? languageId = null)
         {
-            var response = await _candidateService.GetByIdAsync(id);
+            var response = await _candidateService.GetByIdAsync(id, languageId);
             if (!response.IsSuccess)
                 return StatusCode(int.Parse(response.StatusCode), response.Message);
 
@@ -70,11 +89,11 @@ namespace RAP.Administrator.API.Controllers
                 PositionName = candidate.Position?.PositionName,
                 TeamId = candidate.TeamId,
                 TeamName = candidate.Team?.TeamName,
-                IsDefault = candidate.IsDefault,
                 StatusId = candidate.StatusId,
+                IsDefault = candidate.IsDefault,
                 Localizations = candidate.Localizations?.Select(l => new CandidateLocalizationDto
                 {
-                    LanguageId = (int)l.LanguageId,
+                    LanguageId = (int) l.LanguageId,
                     LocalizedName = l.LocalizedName,
                     LocalizedDescription = l.LocalizedDescription
                 }).ToList(),
@@ -90,62 +109,41 @@ namespace RAP.Administrator.API.Controllers
             return Ok(dto);
         }
 
+       
         [HttpPost("CreateSingle")]
         public async Task<IActionResult> CreateSingle([FromBody] CandidateCreateDto dto, [FromQuery] int userId)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            try
+            var entity = new CandidateEntity
             {
-               
-                var entity = new CandidateEntity
-                {
-                    Code = dto.Code,
-                    Name = dto.Name,
-                    PositionId = dto.PositionId,
-                    TeamId = dto.TeamId,
-                    IsDefault = dto.IsDefault,
-                    StatusId = dto.StatusId,
-                    Localizations = dto.Localizations?.Select(l => new CandidateLocalization
-                    {
-                        LanguageId = l.LanguageId,
-                        LocalizedName = l.LocalizedName,
-                        LocalizedDescription = l.LocalizedDescription
-                    }).ToList()
-                };
+                Code = dto.Code,
+                Name = dto.Name,
+                PositionId = dto.PositionId,
+                TeamId = dto.TeamId,
+                StatusId = dto.StatusId,
+                IsDefault = dto.IsDefault,
+                //Localizations = dto.Localizations?.Select(l => new CandidateLocalization
+                //{
+                //    LanguageId = l.LanguageId,
+                //    LocalizedName = l.LocalizedName,
+                //    LocalizedDescription = l.LocalizedDescription
+                //}).ToList()
+            };
 
-             
-                var response = await _candidateService.CreateAsync(entity, userId);
+            var response = await _candidateService.CreateAsync(entity, userId);
+            if (!response.IsSuccess)
+                return StatusCode(int.Parse(response.StatusCode), response.Message);
 
-                if (!response.IsSuccess)
-                    return StatusCode(int.Parse(response.StatusCode), response.Message);
-
-                var createdCandidate = response.Data as CandidateEntity;
-
-                var audits = createdCandidate?.Audits?.Select(a => new CandidateAuditDto
-                {
-                    CandidateId = a.CandidateId,
-                    ActionTypeId = a.ActionTypeId,
-                    ActionUserId = a.ActionUserId,
-                    ActionUserAt = a.ActionUserAt
-                }).ToList() ?? new List<CandidateAuditDto>();
-
-                return Ok(new
-                {
-                    Message = response.Message,
-                    Id = createdCandidate?.Id,
-                    Audits = audits
-                });
-            }
-            catch (Exception ex)
+            return Ok(new
             {
-                
-                return StatusCode(500, $"Error creating candidate: {ex.Message}");
-            }
+                Message = response.Message,
+                Id = ((CandidateEntity)response.Data).Id
+            });
         }
 
-
+       
         [HttpPost("CreateBulk")]
         public async Task<IActionResult> CreateBulk([FromBody] CandidateBulkCreateDto dto, [FromQuery] int userId)
         {
@@ -155,38 +153,28 @@ namespace RAP.Administrator.API.Controllers
                 Name = c.Name,
                 PositionId = c.PositionId,
                 TeamId = c.TeamId,
-                IsDefault = c.IsDefault,
                 StatusId = c.StatusId,
-                Localizations = c.Localizations?.Select(l => new CandidateLocalization
-                {
-                    LanguageId = l.LanguageId,
-                    LocalizedName = l.LocalizedName,
-                    LocalizedDescription = l.LocalizedDescription
-                }).ToList()
+                IsDefault = c.IsDefault,
+                //Localizations = c.Localizations?.Select(l => new CandidateLocalization
+                //{
+                //    LanguageId = l.LanguageId,
+                //    LocalizedName = l.LocalizedName,
+                //    LocalizedDescription = l.LocalizedDescription
+                //}).ToList()
             }).ToList();
 
             var response = await _candidateService.CreateBulkAsync(entities, userId);
             if (!response.IsSuccess)
                 return StatusCode(int.Parse(response.StatusCode), response.Message);
 
-           
-            //var createdCandidates = entities;
-            //var audits = createdCandidates.SelectMany(c => c.Audits?.Select(a => new CandidateAuditDto
-            //{
-            //    CandidateId = a.CandidateId,
-            //    ActionTypeId = a.ActionTypeId,
-            //    ActionUserId = a.ActionUserId,
-            //    ActionUserAt = a.ActionUserAt
-            //}) ?? new List<CandidateAuditDto>()).ToList();
-
             return Ok(new
             {
                 Message = response.Message,
-                CreatedCount = response.Data,
-               
+                CreatedCount = response.Data
             });
         }
 
+        
         [HttpPut("Update")]
         public async Task<IActionResult> Update([FromBody] CandidateUpdateDto dto, [FromQuery] int userId)
         {
@@ -197,8 +185,8 @@ namespace RAP.Administrator.API.Controllers
                 Name = dto.Name,
                 PositionId = dto.PositionId,
                 TeamId = dto.TeamId,
-                IsDefault = dto.IsDefault,
                 StatusId = dto.StatusId,
+                IsDefault = dto.IsDefault,
                 Localizations = dto.Localizations?.Select(l => new CandidateLocalization
                 {
                     LanguageId = l.LanguageId,
@@ -214,6 +202,7 @@ namespace RAP.Administrator.API.Controllers
             return Ok(new { Message = response.Message });
         }
 
+       
         [HttpDelete("Delete")]
         public async Task<IActionResult> Delete([FromQuery] int id, [FromQuery] int userId)
         {
@@ -224,6 +213,7 @@ namespace RAP.Administrator.API.Controllers
             return Ok(new { Message = response.Message });
         }
 
+      
         [HttpGet("GetAllTemplateData")]
         public async Task<IActionResult> GetAllTemplateData()
         {
@@ -234,6 +224,7 @@ namespace RAP.Administrator.API.Controllers
             return Ok(response.Data);
         }
 
+       
         [HttpGet("GetAllGallery")]
         public async Task<IActionResult> GetAllGallery()
         {
@@ -244,6 +235,7 @@ namespace RAP.Administrator.API.Controllers
             return Ok(response.Data);
         }
 
+        // ---------------- GET AUDITS ----------------
         [HttpGet("GetAllAudits")]
         public async Task<IActionResult> GetAllAudits([FromQuery] int candidateId)
         {

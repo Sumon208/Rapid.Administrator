@@ -16,6 +16,7 @@ namespace RAP.Administrator.Infrastructure.Repositories
         {
             _context = context;
         }
+
         public async Task<(IEnumerable<CandidateEntity> Data, int TotalCount)> GetAllAsync(
             int pageNumber = 1, int pageSize = 10, int? languageId = null)
         {
@@ -33,7 +34,6 @@ namespace RAP.Administrator.Infrastructure.Repositories
                 .Take(pageSize > 0 ? pageSize : totalCount)
                 .ToListAsync();
 
-            // Filter localizations by languageId after fetching
             if (languageId.HasValue)
             {
                 foreach (var candidate in data)
@@ -56,56 +56,33 @@ namespace RAP.Administrator.Infrastructure.Repositories
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (candidate != null && languageId.HasValue)
+            {
                 candidate.Localizations = candidate.Localizations
-                    .Where(l => l.LanguageId == languageId)
+                    .Where(l => l.LanguageId == languageId.Value)
                     .ToList();
+            }
 
             return candidate;
         }
 
         public async Task<CandidateEntity> CreateAsync(CandidateEntity entity, int userId)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
+            await _context.Candidates.AddAsync(entity);
+            await _context.SaveChangesAsync();
 
-            try
-            {
-               
-                _context.Candidates.Add(entity);
-                await _context.SaveChangesAsync();
-
-                
-                if (entity.Localizations != null && entity.Localizations.Any())
-                {
-                    foreach (var loc in entity.Localizations)
-                    {
-                        loc.CandidateId = entity.Id; 
-                    }
-                    _context.CandidateLocalizations.AddRange(entity.Localizations);
-                    await _context.SaveChangesAsync();
-                }
-
-                await AddAuditAsync(entity.Id, userId, "Create");
-
-                await transaction.CommitAsync();
-                return entity;
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                throw; 
-            }
+            await AddAuditAsync(entity.Id, "Insert", userId);
+            return entity;
         }
-
 
         public async Task<int> CreateBulkAsync(IEnumerable<CandidateEntity> entities, int userId)
         {
-            _context.Candidates.AddRange(entities);
-            await _context.SaveChangesAsync();
+            await _context.Candidates.AddRangeAsync(entities);
+            int count = await _context.SaveChangesAsync();
 
             foreach (var entity in entities)
-                await AddAuditAsync(entity.Id, userId, "CreateBulk");
+                await AddAuditAsync(entity.Id, "Insert", userId);
 
-            return entities.Count();
+            return count;
         }
 
         public async Task<bool> UpdateAsync(CandidateEntity entity, int userId)
@@ -117,100 +94,66 @@ namespace RAP.Administrator.Infrastructure.Repositories
             if (existing == null)
                 return false;
 
-            existing.Code = entity.Code;
-            existing.Name = entity.Name;
-            existing.PositionId = entity.PositionId;
-            existing.TeamId = entity.TeamId;
-            existing.IsDefault = entity.IsDefault;
-            existing.StatusId = entity.StatusId;
-
-            if (entity.Localizations != null)
-            {
-                _context.CandidateLocalizations.RemoveRange(existing.Localizations);
-                await _context.CandidateLocalizations.AddRangeAsync(entity.Localizations);
-            }
+            _context.Entry(existing).CurrentValues.SetValues(entity);
 
             await _context.SaveChangesAsync();
-            await AddAuditAsync(existing.Id, userId, "Update");
+            await AddAuditAsync(existing.Id, "Update", userId);
+
             return true;
         }
 
         public async Task<bool> DeleteAsync(int id, int userId)
         {
-            var entity = await _context.Candidates
-                .Include(c => c.Localizations)
-                .FirstOrDefaultAsync(c => c.Id == id);
-
+            var entity = await _context.Candidates.FindAsync(id);
             if (entity == null)
                 return false;
 
             _context.Candidates.Remove(entity);
             await _context.SaveChangesAsync();
+            await AddAuditAsync(entity.Id, "Delete", userId);
 
-            await AddAuditAsync(entity.Id, userId, "Delete");
             return true;
         }
 
-        public async Task<IEnumerable<CandidateEntity>> GetTemplateDataAsync(int? languageId = null)
+        private async Task AddAuditAsync(int candidateId, string actionType, int userId)
         {
-            var query = _context.Candidates
-                .Include(c => c.Localizations)
-                .Where(c => c.IsDefault)
-                .AsNoTracking();
-
-            if (languageId.HasValue)
-                query = query.Select(c => new CandidateEntity
+            var audit = new CandidateAudit
+            {
+                CandidateId = candidateId,
+                ActionTypeId = actionType switch
                 {
-                    Id = c.Id,
-                    Code = c.Code,
-                    Name = c.Name,
-                    PositionId = c.PositionId,
-                    TeamId = c.TeamId,
-                    StatusId = c.StatusId,
-                    IsDefault = c.IsDefault,
-                    Localizations = c.Localizations.Where(l => l.LanguageId == languageId).ToList()
-                }).AsQueryable();
+                    "Insert" => 1,
+                    "Update" => 2,
+                    "Delete" => 3,
+                    _ => 0
+                },
+                ActionUserId = userId,
+                ActionUserAt = DateTime.UtcNow
+            };
 
-            return await query.ToListAsync();
+            await _context.CandidateAudits.AddAsync(audit);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<CandidateEntity>> GetTemplateDataAsync()
+        {
+            return await _context.Candidates
+                .AsNoTracking()
+                .Take(5)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<string>> GetAllGalleryAsync()
         {
-            return new List<string>();
+            return await Task.FromResult(new List<string>());
         }
 
         public async Task<IEnumerable<CandidateAudit>> GetAllAuditsAsync(int candidateId)
         {
             return await _context.CandidateAudits
-                .AsNoTracking()
                 .Where(a => a.CandidateId == candidateId)
-                .OrderByDescending(a => a.ActionUserAt)
+                .AsNoTracking()
                 .ToListAsync();
         }
-
-        private async Task AddAuditAsync(int candidateId, int userId, string actionTypeName)
-        {
-            var audit = new CandidateAudit
-            {
-                CandidateId = candidateId,
-                ActionUserId = userId,
-                ActionUserAt = DateTime.UtcNow,
-                ActionTypeId = MapActionType(actionTypeName)
-            };
-
-            _context.CandidateAudits.Add(audit);
-            await _context.SaveChangesAsync();
-        }
-
-
-
-        private int MapActionType(string action) => action switch
-        {
-            "Create" => 1,
-            "CreateBulk" => 2,
-            "Update" => 3,
-            "Delete" => 4,
-            _ => 0
-        };
     }
 }

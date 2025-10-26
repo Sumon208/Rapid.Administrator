@@ -21,9 +21,9 @@ namespace RAP.Administrator.Domain.Models.CandidateSelection
         public Team? Team { get; set; }
 
       
-        public ICollection<CandidateLocalization>?Localizations { get; set; }
-        public ICollection<CandidateAudit>?Audits { get; set; }
-        public ICollection<CandidateExport>?Exports { get; set; }
+       public ICollection<CandidateLocalization>?Localizations { get; set; }
+      public ICollection<CandidateAudit>?Audits { get; set; }
+     public ICollection<CandidateExport>?Exports { get; set; }
     }
 }
 

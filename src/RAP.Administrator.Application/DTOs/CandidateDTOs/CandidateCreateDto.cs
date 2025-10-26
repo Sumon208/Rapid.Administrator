@@ -16,7 +16,9 @@ namespace RAP.Administrator.Application.DTOs.CandidateDTOs
         public int? StatusId { get; set; }
         public int? CreatedByUserId { get; set; }
 
-        public List<CandidateLocalizationDto>?Localizations { get; set; }
+       // public List<CandidateLocalizationDto>?Localizations { get; set; }
+       // public List<CandidateAuditDto>?Audits { get; set; }
+
        
     }
 }

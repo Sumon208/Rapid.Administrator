@@ -7,7 +7,9 @@ namespace RAP.Administrator.Application.Interfaces.Repositories
     public interface ICandidateRepository
     {
         Task<(IEnumerable<CandidateEntity> Data, int TotalCount)> GetAllAsync(
-             int pageNumber = 1, int pageSize = 10, int? languageId = null);
+            int pageNumber = 1,
+            int pageSize = 10,
+            int? languageId = null);
 
         Task<CandidateEntity?> GetByIdAsync(int id, int? languageId = null);
 
@@ -16,9 +18,10 @@ namespace RAP.Administrator.Application.Interfaces.Repositories
         Task<int> CreateBulkAsync(IEnumerable<CandidateEntity> entities, int userId);
 
         Task<bool> UpdateAsync(CandidateEntity entity, int userId);
+
         Task<bool> DeleteAsync(int id, int userId);
 
-        Task<IEnumerable<CandidateEntity>> GetTemplateDataAsync(int? languageId = null);
+        Task<IEnumerable<CandidateEntity>> GetTemplateDataAsync();
 
         Task<IEnumerable<string>> GetAllGalleryAsync();
 

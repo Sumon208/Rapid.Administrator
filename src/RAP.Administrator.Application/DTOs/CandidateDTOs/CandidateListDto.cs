@@ -11,5 +11,6 @@
         public int? StatusId { get; set; }
         public string? StatusName { get; set; }
         public List<CandidateAuditDto>? Audits { get; set; }
+        public List<CandidateLocalizationDto>? Localizations { get; set; }
     }
 }
