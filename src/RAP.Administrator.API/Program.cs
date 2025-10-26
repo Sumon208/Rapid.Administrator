@@ -19,6 +19,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddScoped<ICandidateListService, CandidateListService>();
+
+
+builder.Services.AddScoped<ICandidateListRepository,CandidateListRepository>();
+
+
 builder.Services.AddScoped<IRetirementService, RetirementService>();
 
 

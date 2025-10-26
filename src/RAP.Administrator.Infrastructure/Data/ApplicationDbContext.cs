@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RAP.Administrator.Domain.Models.CandidateList;
 using RAP.Administrator.Domain.Models.CandidateSelection;
 using RAP.Administrator.Domain.Models.Divisions;
 using RAP.Administrator.Domain.Models.Insurance;
@@ -60,6 +61,13 @@ public class ApplicationDbContext : DbContext
     public DbSet<RetirementLocalization> RetirementLocalizations { get; set; }
     public DbSet<RetirementAudit> RetirementAudits { get; set; }
     public DbSet<RetirementExport> RetirementExports { get; set; }
+    //Candidate list
+    public DbSet<CandidateListEntity> CandidateLists { get; set; }
+    public DbSet<CandidateListLocalization> CandidateListLocalizations { get; set; }
+    public DbSet<CandidateListAudit> CandidateListAudits { get; set; }
+    public DbSet<CandidateListExport> CandidateListExports { get; set; }
+
+    public DbSet<CountryListEntity> CountryLists { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -107,6 +115,14 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<RetirementAudit>().ToTable("RetirementAudits");
         modelBuilder.Entity<RetirementExport>().ToTable("RetirementExports");
 
+
+        modelBuilder.Entity<CandidateListEntity>().ToTable("CandidateLists");
+        modelBuilder.Entity<CandidateListLocalization>().ToTable("CandidateListLocalizations");
+        modelBuilder.Entity<CandidateListAudit>().ToTable("CandidateListAudits");
+        modelBuilder.Entity<CandidateListExport>().ToTable("CandidateListExports");
+        modelBuilder.Entity<CountryListEntity>().ToTable("CountryLists");
+
+
         // Primary Keys
         modelBuilder.Entity<Division>().HasKey(d => d.Id);
         modelBuilder.Entity<DivisionLocalization>().HasKey(l => l.Id);
@@ -148,7 +164,15 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<RetirementLocalization>().HasKey(l => l.Id);
 
         modelBuilder.Entity<RetirementAudit>().HasKey(a => a.Id);
-        modelBuilder.Entity<RetirementExport>().HasNoKey(); 
+        modelBuilder.Entity<RetirementExport>().HasNoKey();
+
+        modelBuilder.Entity<CandidateListEntity>().HasKey(c => c.Id);
+        modelBuilder.Entity<CandidateListLocalization>().HasKey(l => l.Id);
+        modelBuilder.Entity<CandidateListAudit>().HasKey(a => a.Id);
+        modelBuilder.Entity<CandidateListExport>().HasKey(e => e.Id);
+        modelBuilder.Entity<CountryListEntity>().HasKey(c => c.Id);
+
+
         modelBuilder.Entity<TaxEntity>()
         .Property(t => t.OpeningBalance)
         .HasColumnType("decimal(18,4)"); 
@@ -290,6 +314,27 @@ public class ApplicationDbContext : DbContext
             .HasOne<EmployeeEntity>() 
             .WithMany(e => e.Retirement)
             .HasForeignKey("EmployeeId") 
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // CandidateList 
+        modelBuilder.Entity<CandidateListEntity>()
+            .HasMany(c => c.Localizations)
+            .WithOne(l => l.Candidate)
+            .HasForeignKey(l => l.CandidateId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+       
+        modelBuilder.Entity<CandidateListEntity>()
+            .HasMany(c => c.Audits)
+            .WithOne(a => a.Candidate)
+            .HasForeignKey(a => a.CandidateId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+       
+        modelBuilder.Entity<CandidateListEntity>()
+            .HasOne<CountryListEntity>()
+            .WithMany()
+            .HasForeignKey(c => c.CountryId)
             .OnDelete(DeleteBehavior.Restrict);
 
         base.OnModelCreating(modelBuilder);
