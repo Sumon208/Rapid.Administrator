@@ -19,6 +19,18 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
+builder.Services.AddScoped<ISalaryAdvanceService, SalaryAdvanceService>();
+
+builder.Services.AddScoped<ISalaryAdvanceRepository,SalaryAdvanceRepository>();
+
+
+builder.Services.AddScoped<IJobLocationService, JobLocationService>();
+
+
+builder.Services.AddScoped<IJobLocationRepository,JobLocationRepository>();
+
+
 builder.Services.AddScoped<ICandidateListService, CandidateListService>();
 
 

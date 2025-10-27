@@ -4,6 +4,7 @@ using RAP.Administrator.Domain.Models.CandidateSelection;
 using RAP.Administrator.Domain.Models.Divisions;
 using RAP.Administrator.Domain.Models.Insurance;
 using RAP.Administrator.Domain.Models.Retirement;
+using RAP.Administrator.Domain.Models.SalaryAdvance;
 using RAP.Administrator.Domain.Models.ShiftType;
 using RAP.Administrator.Domain.Models.Tax;
 using RAP.Administrator.Domain.Models.Transfer;
@@ -68,7 +69,23 @@ public class ApplicationDbContext : DbContext
     public DbSet<CandidateListExport> CandidateListExports { get; set; }
 
     public DbSet<CountryListEntity> CountryLists { get; set; }
+   
+    
+    // JobLocation Tables
+    public DbSet<RAP.Administrator.Domain.Models.JobLocation.JobLocationEntity> JobLocations { get; set; }
+    public DbSet<RAP.Administrator.Domain.Models.JobLocation.JobLocationLocalizationEntity> JobLocationLocalizations { get; set; }
+    public DbSet<RAP.Administrator.Domain.Models.JobLocation.JobLocationAuditEntity> JobLocationAudits { get; set; }
+    public DbSet<RAP.Administrator.Domain.Models.JobLocation.JobLocationExportEntity> JobLocationExports { get; set; }
 
+    // SalaryAdvance Tables
+    public DbSet<SalaryAdvanceEntity> SalaryAdvances { get; set; }
+    public DbSet<SalaryAdvanceLocalization> SalaryAdvanceLocalizations { get; set; }
+    public DbSet<SalaryAdvanceAudit> SalaryAdvanceAudits { get; set; }
+    public DbSet<SalaryAdvanceExport> SalaryAdvanceExports { get; set; }
+
+    public DbSet<IqmaListEntity> Iqmas { get; set; } // dropdown
+    public DbSet<PaymentModeListEntity> PaymentModes { get; set; } // dropdown
+    public DbSet<BranchListEntity> Branches { get; set; } // dropdown
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Table mappings
@@ -122,7 +139,21 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<CandidateListExport>().ToTable("CandidateListExports");
         modelBuilder.Entity<CountryListEntity>().ToTable("CountryLists");
 
+        // JobLocation Table Mappings
+        modelBuilder.Entity<RAP.Administrator.Domain.Models.JobLocation.JobLocationEntity>().ToTable("JobLocations");
+        modelBuilder.Entity<RAP.Administrator.Domain.Models.JobLocation.JobLocationLocalizationEntity>().ToTable("JobLocationLocalizations");
+        modelBuilder.Entity<RAP.Administrator.Domain.Models.JobLocation.JobLocationAuditEntity>().ToTable("JobLocationAudits");
+        modelBuilder.Entity<RAP.Administrator.Domain.Models.JobLocation.JobLocationExportEntity>().ToTable("JobLocationExports");
 
+        // SalaryAdvance
+        modelBuilder.Entity<SalaryAdvanceEntity>().ToTable("SalaryAdvances");
+        modelBuilder.Entity<SalaryAdvanceLocalization>().ToTable("SalaryAdvanceLocalizations");
+        modelBuilder.Entity<SalaryAdvanceAudit>().ToTable("SalaryAdvanceAudits");
+        modelBuilder.Entity<SalaryAdvanceExport>().ToTable("SalaryAdvanceExports");
+
+        modelBuilder.Entity<IqmaListEntity>().ToTable("IqmaList");
+        modelBuilder.Entity<PaymentModeListEntity>().ToTable("PaymentModeList");
+        modelBuilder.Entity<BranchListEntity>().ToTable("BranchList");
         // Primary Keys
         modelBuilder.Entity<Division>().HasKey(d => d.Id);
         modelBuilder.Entity<DivisionLocalization>().HasKey(l => l.Id);
@@ -172,6 +203,20 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<CandidateListExport>().HasKey(e => e.Id);
         modelBuilder.Entity<CountryListEntity>().HasKey(c => c.Id);
 
+        // JobLocation Keys
+        modelBuilder.Entity<RAP.Administrator.Domain.Models.JobLocation.JobLocationEntity>().HasKey(j => j.Id);
+        modelBuilder.Entity<RAP.Administrator.Domain.Models.JobLocation.JobLocationLocalizationEntity>().HasKey(l => l.Id);
+        modelBuilder.Entity<RAP.Administrator.Domain.Models.JobLocation.JobLocationAuditEntity>().HasKey(a => a.Id);
+        modelBuilder.Entity<RAP.Administrator.Domain.Models.JobLocation.JobLocationExportEntity>().HasKey(e => e.Id);
+        //SalaryAdvance
+        modelBuilder.Entity<SalaryAdvanceEntity>().HasKey(s => s.Id);
+        modelBuilder.Entity<SalaryAdvanceLocalization>().HasKey(l => l.Id);
+        modelBuilder.Entity<SalaryAdvanceAudit>().HasKey(a => a.Id);
+        modelBuilder.Entity<SalaryAdvanceExport>().HasKey(e => e.Id);
+
+        modelBuilder.Entity<IqmaListEntity>().HasKey(i => i.Id);
+        modelBuilder.Entity<PaymentModeListEntity>().HasKey(p => p.Id);
+        modelBuilder.Entity<BranchListEntity>().HasKey(b => b.Id);
 
         modelBuilder.Entity<TaxEntity>()
         .Property(t => t.OpeningBalance)
@@ -335,6 +380,68 @@ public class ApplicationDbContext : DbContext
             .HasOne<CountryListEntity>()
             .WithMany()
             .HasForeignKey(c => c.CountryId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // JobLocation Relationships
+        modelBuilder.Entity<RAP.Administrator.Domain.Models.JobLocation.JobLocationEntity>()
+            .HasMany(j => j.Localizations)
+            .WithOne(l => l.JobLocation)
+            .HasForeignKey(l => l.JobLocationId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<RAP.Administrator.Domain.Models.JobLocation.JobLocationEntity>()
+            .HasMany(j => j.Audits)
+            .WithOne(a => a.JobLocation)
+            .HasForeignKey(a => a.JobLocationId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+           modelBuilder.Entity<RAP.Administrator.Domain.Models.JobLocation.JobLocationEntity>()
+            .HasOne(j => j.Country)
+            .WithMany()
+            .HasForeignKey(j => j.CountryId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+
+        // SalaryAdvance - Localizations 
+        modelBuilder.Entity<SalaryAdvanceEntity>()
+            .HasMany(s => s.Localizations)
+            .WithOne(l => l.SalaryAdvance)
+            .HasForeignKey(l => l.SalaryAdvanceId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // SalaryAdvance - Audits 
+        modelBuilder.Entity<SalaryAdvanceEntity>()
+            .HasMany(s => s.Audits)
+            .WithOne(a => a.SalaryAdvance)
+            .HasForeignKey(a => a.SalaryAdvanceId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // SalaryAdvance - Exports 
+        modelBuilder.Entity<SalaryAdvanceEntity>()
+            .HasMany<SalaryAdvanceExport>()
+            .WithOne(e => e.SalaryAdvance)
+            .HasForeignKey(e => e.SalaryAdvanceId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // SalaryAdvance -Iqma 
+        modelBuilder.Entity<SalaryAdvanceEntity>()
+            .HasOne(s => s.Iqma)
+            .WithMany()
+            .HasForeignKey(s => s.IqmaId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // SalaryAdvance - PaymentMode 
+        modelBuilder.Entity<SalaryAdvanceEntity>()
+            .HasOne(s => s.PaymentMode)
+            .WithMany()
+            .HasForeignKey(s => s.PaymentModeId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // SalaryAdvance- Branch 
+        modelBuilder.Entity<SalaryAdvanceEntity>()
+            .HasOne(s => s.Branches)
+            .WithMany()
+            .HasForeignKey(s => s.BranchId)
             .OnDelete(DeleteBehavior.Restrict);
 
         base.OnModelCreating(modelBuilder);

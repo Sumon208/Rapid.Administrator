@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace RAP.Administrator.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251026181222_addJObLocationTables")]
+    partial class addJObLocationTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -936,223 +939,6 @@ namespace RAP.Administrator.Infrastructure.Migrations
                     b.ToTable("RetirementLocalizations", (string)null);
                 });
 
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.SalaryAdvance.BranchListEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Branch")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("BranchList", (string)null);
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.SalaryAdvance.IqmaListEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("IqmaNo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("IqmaList", (string)null);
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.SalaryAdvance.PaymentModeListEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PaymentModeList", (string)null);
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.SalaryAdvance.SalaryAdvanceAudit", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("ActionTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("ActionUserAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("ActionUserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Browser")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("CountryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Dail")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IP")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool?>("IsDefault")
-                        .HasColumnType("bit");
-
-                    b.Property<decimal?>("Latitude")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Location")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("Longitude")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("MapURL")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("OS")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("SalaryAdvanceId")
-                        .HasColumnType("int");
-
-                    b.Property<bool?>("StatusId")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SalaryAdvanceId");
-
-                    b.ToTable("SalaryAdvanceAudits", (string)null);
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.SalaryAdvance.SalaryAdvanceEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal?>("AdvanceAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int?>("BranchId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("BranchListEntityId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("IqmaId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("IqmaListEntityId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PaymentModeId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PaymentModeListEntityId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BranchId");
-
-                    b.HasIndex("BranchListEntityId");
-
-                    b.HasIndex("IqmaId");
-
-                    b.HasIndex("IqmaListEntityId");
-
-                    b.HasIndex("PaymentModeId");
-
-                    b.HasIndex("PaymentModeListEntityId");
-
-                    b.ToTable("SalaryAdvances", (string)null);
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.SalaryAdvance.SalaryAdvanceExport", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("ExportedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ExportedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FileName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("SalaryAdvanceId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SalaryAdvanceId");
-
-                    b.ToTable("SalaryAdvanceExports", (string)null);
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.SalaryAdvance.SalaryAdvanceLocalization", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("LanguageId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("SalaryAdvanceId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SalaryAdvanceId");
-
-                    b.ToTable("SalaryAdvanceLocalizations", (string)null);
-                });
-
             modelBuilder.Entity("RAP.Administrator.Domain.Models.ShiftType.ShiftType", b =>
                 {
                     b.Property<long>("Id")
@@ -1873,72 +1659,6 @@ namespace RAP.Administrator.Infrastructure.Migrations
                     b.Navigation("Retirement");
                 });
 
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.SalaryAdvance.SalaryAdvanceAudit", b =>
-                {
-                    b.HasOne("RAP.Administrator.Domain.Models.SalaryAdvance.SalaryAdvanceEntity", "SalaryAdvance")
-                        .WithMany("Audits")
-                        .HasForeignKey("SalaryAdvanceId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("SalaryAdvance");
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.SalaryAdvance.SalaryAdvanceEntity", b =>
-                {
-                    b.HasOne("RAP.Administrator.Domain.Models.SalaryAdvance.BranchListEntity", "Branches")
-                        .WithMany()
-                        .HasForeignKey("BranchId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("RAP.Administrator.Domain.Models.SalaryAdvance.BranchListEntity", null)
-                        .WithMany("SalaryAdvances")
-                        .HasForeignKey("BranchListEntityId");
-
-                    b.HasOne("RAP.Administrator.Domain.Models.SalaryAdvance.IqmaListEntity", "Iqma")
-                        .WithMany()
-                        .HasForeignKey("IqmaId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("RAP.Administrator.Domain.Models.SalaryAdvance.IqmaListEntity", null)
-                        .WithMany("SalaryAdvances")
-                        .HasForeignKey("IqmaListEntityId");
-
-                    b.HasOne("RAP.Administrator.Domain.Models.SalaryAdvance.PaymentModeListEntity", "PaymentMode")
-                        .WithMany()
-                        .HasForeignKey("PaymentModeId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("RAP.Administrator.Domain.Models.SalaryAdvance.PaymentModeListEntity", null)
-                        .WithMany("SalaryAdvances")
-                        .HasForeignKey("PaymentModeListEntityId");
-
-                    b.Navigation("Branches");
-
-                    b.Navigation("Iqma");
-
-                    b.Navigation("PaymentMode");
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.SalaryAdvance.SalaryAdvanceExport", b =>
-                {
-                    b.HasOne("RAP.Administrator.Domain.Models.SalaryAdvance.SalaryAdvanceEntity", "SalaryAdvance")
-                        .WithMany()
-                        .HasForeignKey("SalaryAdvanceId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("SalaryAdvance");
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.SalaryAdvance.SalaryAdvanceLocalization", b =>
-                {
-                    b.HasOne("RAP.Administrator.Domain.Models.SalaryAdvance.SalaryAdvanceEntity", "SalaryAdvance")
-                        .WithMany("Localizations")
-                        .HasForeignKey("SalaryAdvanceId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("SalaryAdvance");
-                });
-
             modelBuilder.Entity("RAP.Administrator.Domain.Models.ShiftType.ShiftTypeAudit", b =>
                 {
                     b.HasOne("RAP.Administrator.Domain.Models.ShiftType.ShiftType", "ShiftType")
@@ -2073,28 +1793,6 @@ namespace RAP.Administrator.Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("RAP.Administrator.Domain.Models.Retirement.RetirementEntity", b =>
-                {
-                    b.Navigation("Audits");
-
-                    b.Navigation("Localizations");
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.SalaryAdvance.BranchListEntity", b =>
-                {
-                    b.Navigation("SalaryAdvances");
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.SalaryAdvance.IqmaListEntity", b =>
-                {
-                    b.Navigation("SalaryAdvances");
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.SalaryAdvance.PaymentModeListEntity", b =>
-                {
-                    b.Navigation("SalaryAdvances");
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.SalaryAdvance.SalaryAdvanceEntity", b =>
                 {
                     b.Navigation("Audits");
 
