@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using RAP.Administrator.Domain.Models.CandidateList;
 using RAP.Administrator.Domain.Models.CandidateSelection;
 using RAP.Administrator.Domain.Models.Divisions;
@@ -85,7 +86,14 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<IqmaListEntity> Iqmas { get; set; } // dropdown
     public DbSet<PaymentModeListEntity> PaymentModes { get; set; } // dropdown
-    public DbSet<BranchListEntity> Branches { get; set; } // dropdown
+    public DbSet<BranchListEntity> Branches { get; set; }
+
+    // Contact Type Tables
+    public DbSet<RAP.Administrator.Domain.Models.ContactType.ContactTypeEntity> ContactTypes { get; set; }
+    public DbSet<RAP.Administrator.Domain.Models.ContactType.ContactTypeLocalizationEntity> ContactTypeLocalizations { get; set; }
+    public DbSet<RAP.Administrator.Domain.Models.ContactType.ContactTypeAuditEntity> ContactTypeAudits { get; set; }
+    public DbSet<RAP.Administrator.Domain.Models.ContactType.ContactTypeExportEntity> ContactTypeExports { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Table mappings
@@ -154,6 +162,13 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<IqmaListEntity>().ToTable("IqmaList");
         modelBuilder.Entity<PaymentModeListEntity>().ToTable("PaymentModeList");
         modelBuilder.Entity<BranchListEntity>().ToTable("BranchList");
+
+        // ContactType Table Mappings
+        modelBuilder.Entity<RAP.Administrator.Domain.Models.ContactType.ContactTypeEntity>().ToTable("ContactTypes");
+        modelBuilder.Entity<RAP.Administrator.Domain.Models.ContactType.ContactTypeLocalizationEntity>().ToTable("ContactTypeLocalizations");
+        modelBuilder.Entity<RAP.Administrator.Domain.Models.ContactType.ContactTypeAuditEntity>().ToTable("ContactTypeAudits");
+        modelBuilder.Entity<RAP.Administrator.Domain.Models.ContactType.ContactTypeExportEntity>().ToTable("ContactTypeExports");
+
         // Primary Keys
         modelBuilder.Entity<Division>().HasKey(d => d.Id);
         modelBuilder.Entity<DivisionLocalization>().HasKey(l => l.Id);
@@ -217,6 +232,11 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<IqmaListEntity>().HasKey(i => i.Id);
         modelBuilder.Entity<PaymentModeListEntity>().HasKey(p => p.Id);
         modelBuilder.Entity<BranchListEntity>().HasKey(b => b.Id);
+        //Contact Type
+        modelBuilder.Entity<RAP.Administrator.Domain.Models.ContactType.ContactTypeEntity>().HasKey(c => c.Id);
+        modelBuilder.Entity<RAP.Administrator.Domain.Models.ContactType.ContactTypeLocalizationEntity>().HasKey(l => l.Id);
+        modelBuilder.Entity<RAP.Administrator.Domain.Models.ContactType.ContactTypeAuditEntity>().HasKey(a => a.Id);
+        modelBuilder.Entity<RAP.Administrator.Domain.Models.ContactType.ContactTypeExportEntity>().HasKey(e => e.Id);
 
         modelBuilder.Entity<TaxEntity>()
         .Property(t => t.OpeningBalance)
@@ -443,6 +463,26 @@ public class ApplicationDbContext : DbContext
             .WithMany()
             .HasForeignKey(s => s.BranchId)
             .OnDelete(DeleteBehavior.Restrict);
+        //contactType
+        modelBuilder.Entity<RAP.Administrator.Domain.Models.ContactType.ContactTypeEntity>()
+    .HasMany(c => c.Localizations)
+    .WithOne(l => l.ContactType)
+    .HasForeignKey(l => l.ContactTypeId)
+    .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<RAP.Administrator.Domain.Models.ContactType.ContactTypeEntity>()
+            .HasMany(c => c.Audits)
+            .WithOne()
+            .HasForeignKey(a => a.ContactTypeId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<RAP.Administrator.Domain.Models.ContactType.ContactTypeAuditEntity>()
+            .Property(a => a.Latitude)
+            .HasColumnType("decimal(18,8)");
+
+        modelBuilder.Entity<RAP.Administrator.Domain.Models.ContactType.ContactTypeAuditEntity>()
+            .Property(a => a.Longitude)
+            .HasColumnType("decimal(18,8)");
 
         base.OnModelCreating(modelBuilder);
     }
