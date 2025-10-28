@@ -584,27 +584,27 @@ public class ApplicationDbContext : DbContext
             .Property(a => a.Longitude)
             .HasColumnType("decimal(18,8)");
 
-        // Document ↔ Localization (One-to-Many)
+        // Document Localization 
         modelBuilder.Entity<DocumentEntity>()
             .HasMany(d => d.Localizations)
             .WithOne(l => l.Document)
             .HasForeignKey(l => l.DocumentId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // Document ↔ Audit (One-to-Many)
+        // Document Audit 
         modelBuilder.Entity<DocumentEntity>()
             .HasMany(d => d.Audits)
             .WithOne(a => a.Document)
             .HasForeignKey(a => a.DocumentId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // Document ↔ Export (One-to-Many)
+        // Document Export 
         modelBuilder.Entity<DocumentEntity>()
             .HasMany(d => d.Exports)
             .WithOne(e => e.Document)
             .HasForeignKey(e => e.DocumentId)
             .OnDelete(DeleteBehavior.Cascade);
-
+        // Loan Type
         modelBuilder.Entity<LoanTypeEntity>()
         .HasMany(l => l.Localizations)
         .WithOne(l => l.LoanType)

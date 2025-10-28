@@ -19,6 +19,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
+builder.Services.AddScoped<ILoanTypeService, LoanTypeService>();
+
+builder.Services.AddScoped<ILoanTypeRepository,LoanTypeRepository>();builder.Services.AddScoped<IDocumentTypeService, DocumentTypeService>();
+
 builder.Services.AddScoped<IDocumentService, DocumentService>();
 
 builder.Services.AddScoped<IDocumentRepository,DocumentRepository>();builder.Services.AddScoped<IDocumentTypeService, DocumentTypeService>();

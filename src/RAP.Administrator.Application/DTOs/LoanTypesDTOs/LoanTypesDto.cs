@@ -13,5 +13,7 @@ namespace RAP.Administrator.Application.DTOs.LoanTypesDTOs
         public string? Description { get; set; }
         public bool? IsDefault { get; set; }
         public bool? Draft { get; set; }
+        public List<LoanTypeLocalizationDto>? Localizations { get; set; }
+        public List<LoanTypeAuditDto>? Audits { get; set; }
     }
 }

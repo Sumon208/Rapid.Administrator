@@ -15,5 +15,6 @@ namespace RAP.Administrator.Application.DTOs.LoanTypesDTOs
 
         // Create with localization support
         public List<LoanTypeLocalizationDto>? Localizations { get; set; }
+        public List<LoanTypeAuditDto>? Audits { get; set; }
     }
 }
