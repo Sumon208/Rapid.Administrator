@@ -3,8 +3,10 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using RAP.Administrator.Domain.Models.CandidateList;
 using RAP.Administrator.Domain.Models.CandidateSelection;
 using RAP.Administrator.Domain.Models.Divisions;
+using RAP.Administrator.Domain.Models.Document;
 using RAP.Administrator.Domain.Models.DocumentType;
 using RAP.Administrator.Domain.Models.Insurance;
+using RAP.Administrator.Domain.Models.LoanType;
 using RAP.Administrator.Domain.Models.Retirement;
 using RAP.Administrator.Domain.Models.SalaryAdvance;
 using RAP.Administrator.Domain.Models.ShiftType;
@@ -101,6 +103,21 @@ public class ApplicationDbContext : DbContext
     public DbSet<DocumentTypeAudit> DocumentTypeAudits { get; set; }
     public DbSet<DocumentTypeExport> DocumentTypeExports { get; set; }
     public DbSet<DocumentCodeTemplate> DocumentCodeTemplates { get; set; }
+    // Document Tables
+    public DbSet<DocumentEntity> Documents { get; set; }
+    public DbSet<DocumentLocalizationEntity> DocumentLocalizations { get; set; }
+    public DbSet<DocumentAuditEntity> DocumentAudits { get; set; }
+    public DbSet<DocumentExportEntity> DocumentExports { get; set; }
+
+    // Document Dropdown Tables
+    public DbSet<OrderByEntity> OrderByLists { get; set; }
+    public DbSet<ShipmentTypeEntity> ShipmentTypeLists { get; set; }
+
+    // LoanType Tables
+    public DbSet<LoanTypeEntity> LoanTypes { get; set; }
+    public DbSet<LoanTypeLocalization> LoanTypeLocalizations { get; set; }
+    public DbSet<LoanTypeAudit> LoanTypeAudits { get; set; }
+    public DbSet<LoanTypeExport> LoanTypeExports { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -183,6 +200,20 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<DocumentTypeAudit>().ToTable("DocumentTypeAudits");
         modelBuilder.Entity<DocumentTypeExport>().ToTable("DocumentTypeExports");
         modelBuilder.Entity<DocumentCodeTemplate>().ToTable("DocumentCodeTemplates");
+
+        // Document Tables
+        modelBuilder.Entity<DocumentEntity>().ToTable("Documents");
+        modelBuilder.Entity<DocumentLocalizationEntity>().ToTable("DocumentLocalizations");
+        modelBuilder.Entity<DocumentAuditEntity>().ToTable("DocumentAudits");
+        modelBuilder.Entity<DocumentExportEntity>().ToTable("DocumentExports");
+
+        modelBuilder.Entity<OrderByEntity>().ToTable("OrderByLists");
+        modelBuilder.Entity<ShipmentTypeEntity>().ToTable("ShipmentTypeLists");
+
+        modelBuilder.Entity<LoanTypeEntity>().ToTable("LoanTypes");
+        modelBuilder.Entity<LoanTypeLocalization>().ToTable("LoanTypeLocalizations");
+        modelBuilder.Entity<LoanTypeAudit>().ToTable("LoanTypeAudits");
+        modelBuilder.Entity<LoanTypeExport>().ToTable("LoanTypeExports");
         // Primary Keys
         modelBuilder.Entity<Division>().HasKey(d => d.Id);
         modelBuilder.Entity<DivisionLocalization>().HasKey(l => l.Id);
@@ -252,6 +283,7 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<RAP.Administrator.Domain.Models.ContactType.ContactTypeAuditEntity>().HasKey(a => a.Id);
         modelBuilder.Entity<RAP.Administrator.Domain.Models.ContactType.ContactTypeExportEntity>().HasKey(e => e.Id);
 
+
         //DocumentType
 
         modelBuilder.Entity<DocumentTypeEntity>().HasKey(d => d.Id);
@@ -259,6 +291,23 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<DocumentTypeAudit>().HasKey(a => a.Id);
         modelBuilder.Entity<DocumentTypeExport>().HasKey(e => e.Id);
         modelBuilder.Entity<DocumentCodeTemplate>().HasKey(t => t.Id);
+
+        // Document Keys
+        modelBuilder.Entity<DocumentEntity>().HasKey(d => d.Id);
+        modelBuilder.Entity<DocumentLocalizationEntity>().HasKey(l => l.Id);
+        modelBuilder.Entity<DocumentAuditEntity>().HasKey(a => a.Id);
+        modelBuilder.Entity<DocumentExportEntity>().HasKey(e => e.Id);
+
+        // Dropdown Keys
+        modelBuilder.Entity<OrderByEntity>().HasKey(o => o.Id);
+        modelBuilder.Entity<ShipmentTypeEntity>().HasKey(s => s.Id);
+
+
+        // LoanType Primary Keys
+        modelBuilder.Entity<LoanTypeEntity>().HasKey(l => l.Id);
+        modelBuilder.Entity<LoanTypeLocalization>().HasKey(l => l.Id);
+        modelBuilder.Entity<LoanTypeAudit>().HasKey(a => a.Id);
+        modelBuilder.Entity<LoanTypeExport>().HasKey(e => e.Id);
         modelBuilder.Entity<TaxEntity>()
 
         .Property(t => t.OpeningBalance)
@@ -534,6 +583,45 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<DocumentTypeAudit>()
             .Property(a => a.Longitude)
             .HasColumnType("decimal(18,8)");
+
+        // Document ↔ Localization (One-to-Many)
+        modelBuilder.Entity<DocumentEntity>()
+            .HasMany(d => d.Localizations)
+            .WithOne(l => l.Document)
+            .HasForeignKey(l => l.DocumentId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Document ↔ Audit (One-to-Many)
+        modelBuilder.Entity<DocumentEntity>()
+            .HasMany(d => d.Audits)
+            .WithOne(a => a.Document)
+            .HasForeignKey(a => a.DocumentId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Document ↔ Export (One-to-Many)
+        modelBuilder.Entity<DocumentEntity>()
+            .HasMany(d => d.Exports)
+            .WithOne(e => e.Document)
+            .HasForeignKey(e => e.DocumentId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<LoanTypeEntity>()
+        .HasMany(l => l.Localizations)
+        .WithOne(l => l.LoanType)
+        .HasForeignKey(l => l.LoanTypeId)
+        .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<LoanTypeEntity>()
+            .HasMany(l => l.Audits)
+            .WithOne(a => a.LoanType)
+            .HasForeignKey(a => a.LoanTypeId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<LoanTypeEntity>()
+            .HasMany(l => l.Exports)
+            .WithOne(e => e.LoanType)
+            .HasForeignKey(e => e.LoanTypeId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         base.OnModelCreating(modelBuilder);
     }
