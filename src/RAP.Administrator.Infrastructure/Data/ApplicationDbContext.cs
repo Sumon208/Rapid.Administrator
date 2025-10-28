@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using RAP.Administrator.Domain.Models.CandidateList;
 using RAP.Administrator.Domain.Models.CandidateSelection;
 using RAP.Administrator.Domain.Models.Divisions;
+using RAP.Administrator.Domain.Models.DocumentType;
 using RAP.Administrator.Domain.Models.Insurance;
 using RAP.Administrator.Domain.Models.Retirement;
 using RAP.Administrator.Domain.Models.SalaryAdvance;
@@ -94,6 +95,13 @@ public class ApplicationDbContext : DbContext
     public DbSet<RAP.Administrator.Domain.Models.ContactType.ContactTypeAuditEntity> ContactTypeAudits { get; set; }
     public DbSet<RAP.Administrator.Domain.Models.ContactType.ContactTypeExportEntity> ContactTypeExports { get; set; }
 
+    // Document Type Tables
+    public DbSet<DocumentTypeEntity> DocumentTypes { get; set; }
+    public DbSet<DocumentTypeLocalization> DocumentTypeLocalizations { get; set; }
+    public DbSet<DocumentTypeAudit> DocumentTypeAudits { get; set; }
+    public DbSet<DocumentTypeExport> DocumentTypeExports { get; set; }
+    public DbSet<DocumentCodeTemplate> DocumentCodeTemplates { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Table mappings
@@ -169,6 +177,12 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<RAP.Administrator.Domain.Models.ContactType.ContactTypeAuditEntity>().ToTable("ContactTypeAudits");
         modelBuilder.Entity<RAP.Administrator.Domain.Models.ContactType.ContactTypeExportEntity>().ToTable("ContactTypeExports");
 
+        //DocumentType
+        modelBuilder.Entity<DocumentTypeEntity>().ToTable("DocumentTypes");
+        modelBuilder.Entity<DocumentTypeLocalization>().ToTable("DocumentTypeLocalizations");
+        modelBuilder.Entity<DocumentTypeAudit>().ToTable("DocumentTypeAudits");
+        modelBuilder.Entity<DocumentTypeExport>().ToTable("DocumentTypeExports");
+        modelBuilder.Entity<DocumentCodeTemplate>().ToTable("DocumentCodeTemplates");
         // Primary Keys
         modelBuilder.Entity<Division>().HasKey(d => d.Id);
         modelBuilder.Entity<DivisionLocalization>().HasKey(l => l.Id);
@@ -238,7 +252,15 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<RAP.Administrator.Domain.Models.ContactType.ContactTypeAuditEntity>().HasKey(a => a.Id);
         modelBuilder.Entity<RAP.Administrator.Domain.Models.ContactType.ContactTypeExportEntity>().HasKey(e => e.Id);
 
+        //DocumentType
+
+        modelBuilder.Entity<DocumentTypeEntity>().HasKey(d => d.Id);
+        modelBuilder.Entity<DocumentTypeLocalization>().HasKey(l => l.Id);
+        modelBuilder.Entity<DocumentTypeAudit>().HasKey(a => a.Id);
+        modelBuilder.Entity<DocumentTypeExport>().HasKey(e => e.Id);
+        modelBuilder.Entity<DocumentCodeTemplate>().HasKey(t => t.Id);
         modelBuilder.Entity<TaxEntity>()
+
         .Property(t => t.OpeningBalance)
         .HasColumnType("decimal(18,4)"); 
 
@@ -481,6 +503,35 @@ public class ApplicationDbContext : DbContext
             .HasColumnType("decimal(18,8)");
 
         modelBuilder.Entity<RAP.Administrator.Domain.Models.ContactType.ContactTypeAuditEntity>()
+            .Property(a => a.Longitude)
+            .HasColumnType("decimal(18,8)");
+
+        //Dcument Type
+        // Relationships
+        modelBuilder.Entity<DocumentTypeEntity>()
+            .HasMany(d => d.Localizations)
+            .WithOne(l => l.DocumentType)
+            .HasForeignKey(l => l.DocumentTypeId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<DocumentTypeEntity>()
+            .HasMany(d => d.Audits)
+            .WithOne(a => a.DocumentType)
+            .HasForeignKey(a => a.DocumentTypeId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<DocumentTypeEntity>()
+            .HasMany(d => d.Exports)
+            .WithOne(e => e.DocumentType)
+            .HasForeignKey(e => e.DocumentTypeId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Decimal precision for audits
+        modelBuilder.Entity<DocumentTypeAudit>()
+            .Property(a => a.Latitude)
+            .HasColumnType("decimal(18,8)");
+
+        modelBuilder.Entity<DocumentTypeAudit>()
             .Property(a => a.Longitude)
             .HasColumnType("decimal(18,8)");
 
