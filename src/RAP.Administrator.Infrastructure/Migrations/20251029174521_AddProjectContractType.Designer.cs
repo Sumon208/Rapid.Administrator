@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace RAP.Administrator.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251029174521_AddProjectContractType")]
+    partial class AddProjectContractType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1688,194 +1691,6 @@ namespace RAP.Administrator.Infrastructure.Migrations
                     b.ToTable("LoanTypeLocalizations", (string)null);
                 });
 
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.ProjectContract.ProjectContractAudit", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("ActionTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("ActionUserAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("ActionUserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Browser")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<bool?>("Draft")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("IP")
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
-
-                    b.Property<bool?>("IsDefault")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("LoanTypeText")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("MapURL")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int?>("ProjectContractId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProjectContractId");
-
-                    b.ToTable("ProjectContractAudits", (string)null);
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.ProjectContract.ProjectContractEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("ContractTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("ContractValue")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("CreatedById")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Customer")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<bool?>("Draft")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool?>("IsDefault")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Subject")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("UpdatedById")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ContractTypeId");
-
-                    b.ToTable("ProjectContracts", (string)null);
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.ProjectContract.ProjectContractEntity+ContractTypeList", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ProjectContractContractTypeLists", (string)null);
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.ProjectContract.ProjectContractExport", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<string>("FileName")
-                        .HasMaxLength(260)
-                        .HasColumnType("nvarchar(260)");
-
-                    b.Property<string>("FileType")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("FileUrl")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<int?>("ProjectContractId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProjectContractId");
-
-                    b.ToTable("ProjectContractExports", (string)null);
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.ProjectContract.ProjectContractLocalization", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("LanguageId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int?>("ProjectContractId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProjectContractId");
-
-                    b.ToTable("ProjectContractLocalizations", (string)null);
-                });
-
             modelBuilder.Entity("RAP.Administrator.Domain.Models.ProjectContractType.ProjectContractTypeAudit", b =>
                 {
                     b.Property<int>("Id")
@@ -3241,46 +3056,6 @@ namespace RAP.Administrator.Infrastructure.Migrations
                     b.Navigation("LoanType");
                 });
 
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.ProjectContract.ProjectContractAudit", b =>
-                {
-                    b.HasOne("RAP.Administrator.Domain.Models.ProjectContract.ProjectContractEntity", "ProjectContract")
-                        .WithMany("Audits")
-                        .HasForeignKey("ProjectContractId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("ProjectContract");
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.ProjectContract.ProjectContractEntity", b =>
-                {
-                    b.HasOne("RAP.Administrator.Domain.Models.ProjectContract.ProjectContractEntity+ContractTypeList", "ContractType")
-                        .WithMany("ProjectContracts")
-                        .HasForeignKey("ContractTypeId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("ContractType");
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.ProjectContract.ProjectContractExport", b =>
-                {
-                    b.HasOne("RAP.Administrator.Domain.Models.ProjectContract.ProjectContractEntity", "ProjectContract")
-                        .WithMany("Exports")
-                        .HasForeignKey("ProjectContractId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("ProjectContract");
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.ProjectContract.ProjectContractLocalization", b =>
-                {
-                    b.HasOne("RAP.Administrator.Domain.Models.ProjectContract.ProjectContractEntity", "ProjectContract")
-                        .WithMany("Localizations")
-                        .HasForeignKey("ProjectContractId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("ProjectContract");
-                });
-
             modelBuilder.Entity("RAP.Administrator.Domain.Models.ProjectContractType.ProjectContractTypeAudit", b =>
                 {
                     b.HasOne("RAP.Administrator.Domain.Models.ProjectContractType.ProjectContractTypeEntity", "ProjectContractType")
@@ -3609,20 +3384,6 @@ namespace RAP.Administrator.Infrastructure.Migrations
                     b.Navigation("Exports");
 
                     b.Navigation("Localizations");
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.ProjectContract.ProjectContractEntity", b =>
-                {
-                    b.Navigation("Audits");
-
-                    b.Navigation("Exports");
-
-                    b.Navigation("Localizations");
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.ProjectContract.ProjectContractEntity+ContractTypeList", b =>
-                {
-                    b.Navigation("ProjectContracts");
                 });
 
             modelBuilder.Entity("RAP.Administrator.Domain.Models.ProjectContractType.ProjectContractTypeEntity", b =>

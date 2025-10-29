@@ -9,11 +9,14 @@ using RAP.Administrator.Domain.Models.DocumentType;
 using RAP.Administrator.Domain.Models.EmployeeContract;
 using RAP.Administrator.Domain.Models.Insurance;
 using RAP.Administrator.Domain.Models.LoanType;
+using RAP.Administrator.Domain.Models.ProjectContract;
+using RAP.Administrator.Domain.Models.ProjectContractType;
 using RAP.Administrator.Domain.Models.Retirement;
 using RAP.Administrator.Domain.Models.SalaryAdvance;
 using RAP.Administrator.Domain.Models.ShiftType;
 using RAP.Administrator.Domain.Models.Tax;
 using RAP.Administrator.Domain.Models.Transfer;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public class ApplicationDbContext : DbContext
 {
@@ -134,13 +137,38 @@ public class ApplicationDbContext : DbContext
     public DbSet<ContactType> ContractTypes { get; set; }
     public DbSet<ContractStatus> ContractStatuses { get; set; }
     public DbSet<SalaryAllowance> SalaryAllowances { get; set; }
- // Staff Name Dropdown
+
+    // Project Contract Type Tables
+    public DbSet<ProjectContractTypeEntity> ProjectContractTypes { get; set; }
+    public DbSet<ProjectContractTypeLocalization> ProjectContractTypeLocalizations { get; set; }
+    public DbSet<ProjectContractTypeAudit> ProjectContractTypeAudits { get; set; }
+    public DbSet<ProjectContractTypeExport> ProjectContractTypeExports { get; set; }
+
+    public DbSet<ProjectContractEntity> ProjectContracts { get; set; }
+    public DbSet<ProjectContractAudit> ProjectContractAudits { get; set; }
+    public DbSet<ProjectContractLocalization> ProjectContractLocalizations { get; set; }
+    public DbSet<ProjectContractExport> ProjectContractExports { get; set; }
+
+    public DbSet<ProjectContractEntity.ContractTypeList> ProjectContractContractTypeLists { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Table mappings
 
-       
+       //ProjectContract
+        modelBuilder.Entity<ProjectContractEntity>().ToTable("ProjectContracts");
+        modelBuilder.Entity<ProjectContractLocalization>().ToTable("ProjectContractLocalizations");
+        modelBuilder.Entity<ProjectContractAudit>().ToTable("ProjectContractAudits");
+        modelBuilder.Entity<ProjectContractExport>().ToTable("ProjectContractExports");
+        modelBuilder.Entity<ProjectContractEntity.ContractTypeList>().ToTable("ProjectContractContractTypeLists");
+
+        // Project Contract Type Tables
+        modelBuilder.Entity<ProjectContractTypeEntity>().ToTable("ProjectContractTypes");
+        modelBuilder.Entity<ProjectContractTypeLocalization>().ToTable("ProjectContractTypeLocalizations");
+        modelBuilder.Entity<ProjectContractTypeAudit>().ToTable("ProjectContractTypeAudits");
+        modelBuilder.Entity<ProjectContractTypeExport>().ToTable("ProjectContractTypeExports");
+
         modelBuilder.Entity<EmployeeContractEntity>().ToTable("EmployeeContracts");
         modelBuilder.Entity<EmployeeContractLocalization>().ToTable("EmployeeContractLocalizations");
         modelBuilder.Entity<EmployeeContractAudit>().ToTable("EmployeeContractAudits");
@@ -244,6 +272,14 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<LoanTypeAudit>().ToTable("LoanTypeAudits");
         modelBuilder.Entity<LoanTypeExport>().ToTable("LoanTypeExports");
         // Primary Keys
+
+    
+        modelBuilder.Entity<ProjectContractTypeEntity>().HasKey(p => p.Id);
+        modelBuilder.Entity<ProjectContractTypeLocalization>().HasKey(l => l.Id);
+        modelBuilder.Entity<ProjectContractTypeAudit>().HasKey(a => a.Id);
+        modelBuilder.Entity<ProjectContractTypeExport>().HasKey(e => e.Id);
+
+
         modelBuilder.Entity<Division>().HasKey(d => d.Id);
         modelBuilder.Entity<DivisionLocalization>().HasKey(l => l.Id);
         modelBuilder.Entity<DivisionAudit>().HasKey(a => a.Id);
@@ -352,6 +388,13 @@ public class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<SalaryAllowance>().ToTable("SalaryAllowance");
         modelBuilder.Entity<SalaryAllowance>().HasKey(s => s.Id);
+
+        modelBuilder.Entity<ProjectContractEntity>().HasKey(pc => pc.Id);
+        modelBuilder.Entity<ProjectContractAudit>().HasKey(a => a.Id);
+        modelBuilder.Entity<ProjectContractLocalization>().HasKey(l => l.Id);
+        modelBuilder.Entity<ProjectContractExport>().HasKey(e => e.Id);
+        modelBuilder.Entity<ProjectContractEntity.ContractTypeList>().HasKey(ct => ct.Id);
+
         modelBuilder.Entity<TaxEntity>()
         
         .Property(t => t.OpeningBalance)
@@ -694,6 +737,55 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(ec => ec.StaffId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // ProjectContractType
+        modelBuilder.Entity<ProjectContractTypeEntity>()
+            .HasMany(p => p.Localizations)
+            .WithOne(l => l.ProjectContractType)
+            .HasForeignKey(l => l.ProjectContractTypeId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        
+        modelBuilder.Entity<ProjectContractTypeEntity>()
+            .HasMany(p => p.Audits)
+            .WithOne(a => a.ProjectContractType)
+            .HasForeignKey(a => a.ProjectContractTypeId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+      
+        modelBuilder.Entity<ProjectContractTypeEntity>()
+            .HasMany(p => p.Exports)
+            .WithOne(e => e.ProjectContractType)
+            .HasForeignKey(e => e.LoanTypeId) 
+            .OnDelete(DeleteBehavior.Cascade);
+
+
+       // ProjectContractEntity 
+           modelBuilder.Entity<ProjectContractEntity>()
+                .HasOne(pc => pc.ContractType)
+                .WithMany(ct => ct.ProjectContracts)
+                .HasForeignKey(pc => pc.ContractTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+       
+        modelBuilder.Entity<ProjectContractEntity>()
+            .HasMany(pc => pc.Audits)
+            .WithOne(a => a.ProjectContract)
+            .HasForeignKey(a => a.ProjectContractId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        
+        modelBuilder.Entity<ProjectContractEntity>()
+            .HasMany(pc => pc.Localizations)
+            .WithOne(l => l.ProjectContract)
+            .HasForeignKey(l => l.ProjectContractId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        
+        modelBuilder.Entity<ProjectContractEntity>()
+            .HasMany(pc => pc.Exports)
+            .WithOne(e => e.ProjectContract)
+            .HasForeignKey(e => e.ProjectContractId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         base.OnModelCreating(modelBuilder);
     }

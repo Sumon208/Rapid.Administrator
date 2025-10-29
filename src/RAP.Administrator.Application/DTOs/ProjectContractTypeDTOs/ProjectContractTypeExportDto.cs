@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace RAP.Administrator.Application.DTOs.ProjectContractTypeDTOs
+{
+    public class ProjectContractTypeExportDto
+    {
+        public int Id { get; set; }
+        public int? LoanTypeId { get; set; }
+        public string? FileName { get; set; }
+        public string? FileType { get; set; }
+        public long? SizeBytes { get; set; }
+        public DateTime? CreatedAt { get; set; }
+        public int? CreatedBy { get; set; }
+    }
+}

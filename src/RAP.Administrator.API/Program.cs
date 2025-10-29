@@ -19,9 +19,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
-builder.Services.AddScoped<IEmployeeContractRepository, EmployeeContractRepository>();
+builder.Services.AddScoped<IProjectContractTypeService, ProjectContractTypeService>();
+builder.Services.AddScoped<IProjectContractTypeRepository, ProjectContractTypeRepository>();
 
-builder.Services.AddScoped<IEmployeeContractRepository,EmployeeContractRepository>();
+builder.Services.AddScoped<IProjectContractService, ProjectContractService>();
+builder.Services.AddScoped<IProjectContractRepository, ProjectContractRepository>();
+
+builder.Services.AddScoped<IEmployeeContractService, EmployeeContractService>();
+builder.Services.AddScoped<IEmployeeContractRepository, EmployeeContractRepository>();
 
 builder.Services.AddScoped<ILoanTypeService, LoanTypeService>();
 
