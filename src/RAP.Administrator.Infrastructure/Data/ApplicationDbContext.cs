@@ -2,9 +2,11 @@
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using RAP.Administrator.Domain.Models.CandidateList;
 using RAP.Administrator.Domain.Models.CandidateSelection;
+using RAP.Administrator.Domain.Models.ContactType;
 using RAP.Administrator.Domain.Models.Divisions;
 using RAP.Administrator.Domain.Models.Document;
 using RAP.Administrator.Domain.Models.DocumentType;
+using RAP.Administrator.Domain.Models.EmployeeContract;
 using RAP.Administrator.Domain.Models.Insurance;
 using RAP.Administrator.Domain.Models.LoanType;
 using RAP.Administrator.Domain.Models.Retirement;
@@ -18,6 +20,10 @@ public class ApplicationDbContext : DbContext
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options) { }
 
+
+    public DbSet<EmployeeContractEntity> EmployeeContracts { get; set; }
+    public DbSet<EmployeeContractLocalization> EmployeeContractLocalizations { get; set; }
+    public DbSet<EmployeeContractAudit> EmployeeContractAudits { get; set; }
     // Tax Tables
     public DbSet<TaxEntity> Taxes { get; set; }
     public DbSet<TaxAuditEntity> TaxAudits { get; set; }
@@ -118,10 +124,33 @@ public class ApplicationDbContext : DbContext
     public DbSet<LoanTypeLocalization> LoanTypeLocalizations { get; set; }
     public DbSet<LoanTypeAudit> LoanTypeAudits { get; set; }
     public DbSet<LoanTypeExport> LoanTypeExports { get; set; }
+    // ContactType Tables
+    public DbSet<ContactTypeEntity> Contracts { get; set; }
+    public DbSet<ContactTypeLocalizationEntity> ContractTypeLocalizations { get; set; }
+    public DbSet<ContactTypeAuditEntity> ContractTypeAudits { get; set; }
+    public DbSet<ContactTypeExportEntity> ContractTypeExports { get; set; }
+
+    
+    public DbSet<ContactType> ContractTypes { get; set; }
+    public DbSet<ContractStatus> ContractStatuses { get; set; }
+    public DbSet<SalaryAllowance> SalaryAllowances { get; set; }
+ // Staff Name Dropdown
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Table mappings
+
+       
+        modelBuilder.Entity<EmployeeContractEntity>().ToTable("EmployeeContracts");
+        modelBuilder.Entity<EmployeeContractLocalization>().ToTable("EmployeeContractLocalizations");
+        modelBuilder.Entity<EmployeeContractAudit>().ToTable("EmployeeContractAudits");
+        modelBuilder.Entity<EmployeeContractExport>().ToTable("EmployeeContractExports");
+
+        modelBuilder.Entity<ContactType>().ToTable("ContactType");
+        modelBuilder.Entity<ContractStatus>().ToTable("ContractStatus");
+        modelBuilder.Entity<SalaryAllowance>().ToTable("SalaryAllowance");
+
+
         modelBuilder.Entity<TaxEntity>().ToTable("Taxes");
         modelBuilder.Entity<TaxAuditEntity>().ToTable("TaxAudits");
 
@@ -231,7 +260,12 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<CandidateExport>().HasKey(e => e.Id);
         modelBuilder.Entity<Position>().HasKey(p => p.Id);
         modelBuilder.Entity<Team>().HasKey(t => t.Id);
+
         modelBuilder.Entity<RAP.Administrator.Domain.Models.Divisions.ActionType>().HasKey(at => at.Id);
+        modelBuilder.Entity<EmployeeContractEntity>().HasKey(e => e.Id);
+        modelBuilder.Entity<EmployeeContractAudit>().HasKey(e => e.Id);
+        modelBuilder.Entity<ContactTypeEntity>().HasKey(c => c.Id);
+        modelBuilder.Entity<ContactTypeAuditEntity>().HasKey(c => c.Id);
 
         //  Key configurations
         modelBuilder.Entity<EmployeeEntity>().HasKey(e => e.Id);
@@ -308,8 +342,18 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<LoanTypeLocalization>().HasKey(l => l.Id);
         modelBuilder.Entity<LoanTypeAudit>().HasKey(a => a.Id);
         modelBuilder.Entity<LoanTypeExport>().HasKey(e => e.Id);
-        modelBuilder.Entity<TaxEntity>()
 
+        
+
+        // dropdown for contract-type
+        modelBuilder.Entity<ContractStatus>().ToTable("ContractStatus");
+        modelBuilder.Entity<ContractStatus>().HasKey(c => c.Id);
+        modelBuilder.Entity<ContactTypeExportEntity>().HasKey(c => c.Id);
+
+        modelBuilder.Entity<SalaryAllowance>().ToTable("SalaryAllowance");
+        modelBuilder.Entity<SalaryAllowance>().HasKey(s => s.Id);
+        modelBuilder.Entity<TaxEntity>()
+        
         .Property(t => t.OpeningBalance)
         .HasColumnType("decimal(18,4)"); 
 
@@ -622,6 +666,34 @@ public class ApplicationDbContext : DbContext
             .WithOne(e => e.LoanType)
             .HasForeignKey(e => e.LoanTypeId)
             .OnDelete(DeleteBehavior.Cascade);
+
+       
+        // EmployeeContract 
+      
+        modelBuilder.Entity<EmployeeContractEntity>()
+            .HasOne(ec => ec.ContactType)
+            .WithMany()
+            .HasForeignKey(ec => ec.ContactTypeId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<EmployeeContractEntity>()
+            .HasOne(ec => ec.Status)
+            .WithMany()
+            .HasForeignKey(ec => ec.StatusId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<EmployeeContractEntity>()
+            .HasOne(ec => ec.SalaryAllowance)
+            .WithMany()
+            .HasForeignKey(ec => ec.SalaryAllowanceId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<EmployeeContractEntity>()
+            .HasOne(ec => ec.Staff)
+            .WithMany()
+            .HasForeignKey(ec => ec.StaffId)
+            .OnDelete(DeleteBehavior.Restrict);
+
 
         base.OnModelCreating(modelBuilder);
     }
