@@ -19,6 +19,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
+builder.Services.AddScoped<ISafetyMaterialsService, SafetyMaterialsService>();
+builder.Services.AddScoped<ISafetyMaterialsRepository, SafetyMaterialsRepository>();
+
+builder.Services.AddScoped<IBranchService, BranchService>();
+builder.Services.AddScoped<IBranchRepository, BranchRepository>();
+
 builder.Services.AddScoped<ILoansService, LoansService>();
 builder.Services.AddScoped<ILoanRepository, LoanRepository>();
 

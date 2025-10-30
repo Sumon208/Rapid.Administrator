@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using RAP.Administrator.Domain.Models.Branches;
 using RAP.Administrator.Domain.Models.CandidateList;
 using RAP.Administrator.Domain.Models.CandidateSelection;
 using RAP.Administrator.Domain.Models.ContactType;
@@ -8,11 +9,13 @@ using RAP.Administrator.Domain.Models.Document;
 using RAP.Administrator.Domain.Models.DocumentType;
 using RAP.Administrator.Domain.Models.EmployeeContract;
 using RAP.Administrator.Domain.Models.Insurance;
+using RAP.Administrator.Domain.Models.JobLocation;
 using RAP.Administrator.Domain.Models.Loan;
 using RAP.Administrator.Domain.Models.LoanType;
 using RAP.Administrator.Domain.Models.ProjectContract;
 using RAP.Administrator.Domain.Models.ProjectContractType;
 using RAP.Administrator.Domain.Models.Retirement;
+using RAP.Administrator.Domain.Models.SafetyMaterials;
 using RAP.Administrator.Domain.Models.SalaryAdvance;
 using RAP.Administrator.Domain.Models.ShiftType;
 using RAP.Administrator.Domain.Models.Tax;
@@ -24,6 +27,25 @@ public class ApplicationDbContext : DbContext
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options) { }
 
+
+    // Branch Master & related
+    public DbSet<BranchEntity> MSDBranches { get; set; }
+    public DbSet<BranchLocalization> BranchesLocalizations { get; set; }
+    public DbSet<BranchAuditEntity> BranchesAudits { get; set; }
+    public DbSet<BranchExport> BranchesExports { get; set; }
+
+    // Branch Dropdowns
+    public DbSet<CompanyListEntity> CompanyLists { get; set; }
+    public DbSet<CurrencyListEntity> CurrencyLists { get; set; }
+    public DbSet<BankListEntity> BankLists { get; set; }
+    public DbSet<InvoiceFormatListEntity> InvoiceFormats { get; set; }
+
+    // safety-materials
+    public DbSet<SafetyMaterialsEntity> SafetyMaterials { get; set; }
+    public DbSet<SafetyMaterialsAuditEntity> SafetyMaterialsAudits { get; set; }
+    public DbSet<SafetyMaterialsLocalizationEntity> SafetyMaterialsLocalizations { get; set; }
+    public DbSet<SafetyMaterialsExportEntity> SafetyMaterialsExports { get; set; }
+    public DbSet<DurationEntity> Durations { get; set; }
 
     public DbSet<EmployeeContractEntity> EmployeeContracts { get; set; }
     public DbSet<EmployeeContractLocalization> EmployeeContractLocalizations { get; set; }
@@ -82,7 +104,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<CandidateListAudit> CandidateListAudits { get; set; }
     public DbSet<CandidateListExport> CandidateListExports { get; set; }
 
-    public DbSet<CountryListEntity> CountryLists { get; set; }
+    
    
     
     // JobLocation Tables
@@ -160,10 +182,28 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<AuthorityEntity> LoansAuthority { get; set; }
 
+    
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Table mappings
+        // Branch Master 
+        modelBuilder.Entity<BranchEntity>().ToTable("MSDBranches");
+        modelBuilder.Entity<BranchLocalization>().ToTable("BranchesLocalizations");
+        modelBuilder.Entity<BranchAuditEntity>().ToTable("BranchesAudits");
+        modelBuilder.Entity<BranchExport>().ToTable("BranchesExports");
 
+
+        modelBuilder.Entity<CompanyListEntity>().ToTable("CompanyLists");
+        modelBuilder.Entity<CurrencyListEntity>().ToTable("CurrencyLists");
+        modelBuilder.Entity<BankListEntity>().ToTable("BankLists");
+        modelBuilder.Entity<InvoiceFormatListEntity>().ToTable("InvoiceFormats");
+
+        // Safety-materials
+        modelBuilder.Entity<SafetyMaterialsEntity>().ToTable("SafetyMaterials");
+        modelBuilder.Entity<SafetyMaterialsAuditEntity>().ToTable("SafetyMaterialsAudits");
+        modelBuilder.Entity<SafetyMaterialsExportEntity>().ToTable("SafetyMaterialsExports");
+        modelBuilder.Entity<DurationEntity>().ToTable("Durations");
         // Loan Tables
         modelBuilder.Entity<LoanEntity>().ToTable("Loans");
         modelBuilder.Entity<LoanLocalization>().ToTable("LoanLocalizations");
@@ -246,7 +286,7 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<CandidateListLocalization>().ToTable("CandidateListLocalizations");
         modelBuilder.Entity<CandidateListAudit>().ToTable("CandidateListAudits");
         modelBuilder.Entity<CandidateListExport>().ToTable("CandidateListExports");
-        modelBuilder.Entity<CountryListEntity>().ToTable("CountryLists");
+        
 
         // JobLocation Table Mappings
         modelBuilder.Entity<RAP.Administrator.Domain.Models.JobLocation.JobLocationEntity>().ToTable("JobLocations");
@@ -265,10 +305,10 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<BranchListEntity>().ToTable("BranchList");
 
         // ContactType Table Mappings
-        modelBuilder.Entity<RAP.Administrator.Domain.Models.ContactType.ContactTypeEntity>().ToTable("ContactTypes");
-        modelBuilder.Entity<RAP.Administrator.Domain.Models.ContactType.ContactTypeLocalizationEntity>().ToTable("ContactTypeLocalizations");
-        modelBuilder.Entity<RAP.Administrator.Domain.Models.ContactType.ContactTypeAuditEntity>().ToTable("ContactTypeAudits");
-        modelBuilder.Entity<RAP.Administrator.Domain.Models.ContactType.ContactTypeExportEntity>().ToTable("ContactTypeExports");
+        modelBuilder.Entity<ContactTypeEntity>().ToTable("ContactTypes");
+        modelBuilder.Entity<ContactTypeLocalizationEntity>().ToTable("ContactTypeLocalizations");
+        modelBuilder.Entity<ContactTypeAuditEntity>().ToTable("ContactTypeAudits");
+        modelBuilder.Entity<ContactTypeExportEntity>().ToTable("ContactTypeExports");
 
         //DocumentType
         modelBuilder.Entity<DocumentTypeEntity>().ToTable("DocumentTypes");
@@ -291,8 +331,27 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<LoanTypeAudit>().ToTable("LoanTypeAudits");
         modelBuilder.Entity<LoanTypeExport>().ToTable("LoanTypeExports");
 
+       
+
+        // Branch Dropdowns
+        modelBuilder.Entity<CompanyListEntity>().ToTable("CompanyLists");
+        modelBuilder.Entity<CurrencyListEntity>().ToTable("CurrencyLists");
+        
+        modelBuilder.Entity<BankListEntity>().ToTable("BankLists");
+        modelBuilder.Entity<InvoiceFormatListEntity>().ToTable("InvoiceFormats");
 
         // Primary Keys
+
+        modelBuilder.Entity<BranchEntity>().HasKey(b => b.Id);
+        modelBuilder.Entity<BranchLocalization>().HasKey(l => l.Id);
+        modelBuilder.Entity<BranchAuditEntity>().HasKey(a => a.Id);
+        modelBuilder.Entity<BranchExport>().HasKey(e => e.Id);
+
+        modelBuilder.Entity<CompanyListEntity>().HasKey(c => c.Id);
+        modelBuilder.Entity<CurrencyListEntity>().HasKey(c => c.Id);
+        modelBuilder.Entity<BankListEntity>().HasKey(b => b.Id);
+        modelBuilder.Entity<InvoiceFormatListEntity>().HasKey(i => i.Id);
+
         modelBuilder.Entity<LoanEntity>().HasKey(l => l.Id);
         modelBuilder.Entity<LoanLocalization>().HasKey(l => l.Id);
         modelBuilder.Entity<LoanAudit>().HasKey(a => a.Id);
@@ -358,7 +417,7 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<CandidateListLocalization>().HasKey(l => l.Id);
         modelBuilder.Entity<CandidateListAudit>().HasKey(a => a.Id);
         modelBuilder.Entity<CandidateListExport>().HasKey(e => e.Id);
-        modelBuilder.Entity<CountryListEntity>().HasKey(c => c.Id);
+        //modelBuilder.Entity<CountryListEntity>().HasKey(c => c.Id);
 
         // JobLocation Keys
         modelBuilder.Entity<RAP.Administrator.Domain.Models.JobLocation.JobLocationEntity>().HasKey(j => j.Id);
@@ -375,10 +434,10 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<PaymentModeListEntity>().HasKey(p => p.Id);
         modelBuilder.Entity<BranchListEntity>().HasKey(b => b.Id);
         //Contact Type
-        modelBuilder.Entity<RAP.Administrator.Domain.Models.ContactType.ContactTypeEntity>().HasKey(c => c.Id);
-        modelBuilder.Entity<RAP.Administrator.Domain.Models.ContactType.ContactTypeLocalizationEntity>().HasKey(l => l.Id);
-        modelBuilder.Entity<RAP.Administrator.Domain.Models.ContactType.ContactTypeAuditEntity>().HasKey(a => a.Id);
-        modelBuilder.Entity<RAP.Administrator.Domain.Models.ContactType.ContactTypeExportEntity>().HasKey(e => e.Id);
+        modelBuilder.Entity<ContactTypeEntity>().HasKey(c => c.Id);
+        modelBuilder.Entity<ContactTypeLocalizationEntity>().HasKey(l => l.Id);
+        modelBuilder.Entity<ContactTypeAuditEntity>().HasKey(a => a.Id);
+        modelBuilder.Entity<ContactTypeExportEntity>().HasKey(e => e.Id);
 
 
         //DocumentType
@@ -422,10 +481,17 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<ProjectContractExport>().HasKey(e => e.Id);
         modelBuilder.Entity<ProjectContractEntity.ContractTypeList>().HasKey(ct => ct.Id);
 
+        modelBuilder.Entity<SafetyMaterialsEntity>().HasKey(s => s.Id);
+        modelBuilder.Entity<SafetyMaterialsLocalizationEntity>().HasKey(l => l.Id);
+        modelBuilder.Entity<SafetyMaterialsAuditEntity>().HasKey(a => a.Id);
+        modelBuilder.Entity<RAP.Administrator.Domain.Models.SafetyMaterials.SafetyMaterialsExportEntity>().HasKey(e => e.Id);
+        modelBuilder.Entity<DurationEntity>().HasKey(d => d.Id);
+
+       
+
         modelBuilder.Entity<TaxEntity>()
-        
-        .Property(t => t.OpeningBalance)
-        .HasColumnType("decimal(18,4)"); 
+            .Property(t => t.OpeningBalance)
+            .HasColumnType("decimal(18,4)"); 
 
             modelBuilder.Entity<TaxAuditEntity>()
                 .Property(t => t.Latitude)
@@ -582,7 +648,7 @@ public class ApplicationDbContext : DbContext
 
        
         modelBuilder.Entity<CandidateListEntity>()
-            .HasOne<CountryListEntity>()
+            .HasOne<RAP.Administrator.Domain.Models.CandidateList.CountryListEntity>()
             .WithMany()
             .HasForeignKey(c => c.CountryId)
             .OnDelete(DeleteBehavior.Restrict);
@@ -600,11 +666,13 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(a => a.JobLocationId)
             .OnDelete(DeleteBehavior.Cascade);
 
-           modelBuilder.Entity<RAP.Administrator.Domain.Models.JobLocation.JobLocationEntity>()
-            .HasOne(j => j.Country)
-            .WithMany()
-            .HasForeignKey(j => j.CountryId)
-            .OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<JobLocationEntity>()
+
+              .HasOne(j => j.Country)
+              .WithMany()
+              .HasForeignKey(j => j.CountryId)
+              .OnDelete(DeleteBehavior.Restrict); // keeps nullable safe
+
 
 
         // SalaryAdvance - Localizations 
@@ -841,13 +909,104 @@ public class ApplicationDbContext : DbContext
             .WithMany(a => a.Loans)
             .HasForeignKey(l => l.PermittedById)
             .OnDelete(DeleteBehavior.Restrict);
+        // SafetyMaterials 
+        modelBuilder.Entity<SafetyMaterialsEntity>()
+            .HasMany(s => s.Localizations)
+            .WithOne(l => l.SafetyMaterials)
+            .HasForeignKey(l => l.SafetyMaterialsId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-     
+        
+        modelBuilder.Entity<SafetyMaterialsEntity>()
+            .HasMany(s => s.Audits)
+            .WithOne(a => a.SafetyMaterials)
+            .HasForeignKey(a => a.SafetyMaterialsId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        
+        modelBuilder.Entity<SafetyMaterialsEntity>()
+            .HasMany(s => s.Exports)
+            .WithOne(e => e.SafetyMaterials)
+            .HasForeignKey(e => e.SafetyMaterialsId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+      
+        modelBuilder.Entity<SafetyMaterialsEntity>()
+            .HasOne(s => s.Employee)
+            .WithMany(e => e.SafetyMaterials)
+            .HasForeignKey(s => s.EmployeeId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+       
+        modelBuilder.Entity<SafetyMaterialsEntity>()
+            .HasOne(s => s.Duration)
+            .WithMany(d => d.SafetyMaterials)
+            .HasForeignKey(s => s.DurationId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+       
+        modelBuilder.Entity<DurationEntity>()
+            .HasMany(d => d.SafetyMaterials)
+            .WithOne(s => s.Duration)
+            .HasForeignKey(s => s.DurationId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         modelBuilder.Entity<LoanEntity>()
             .HasOne<TransferIqamaEntity>()   
             .WithMany()
             .HasForeignKey(l => l.IqmaId)
             .OnDelete(DeleteBehavior.Restrict);
+        // Branch -> Children
+        // ======================
+        modelBuilder.Entity<BranchEntity>()
+            .HasMany(b => b.Localizations)
+            .WithOne(l => l.Branch)   // single navigation in child
+            .HasForeignKey(l => l.BranchId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<BranchEntity>()
+            .HasMany(b => b.Audits)
+            .WithOne(a => a.Branch)
+            .HasForeignKey(a => a.BranchId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<BranchEntity>()
+            .HasMany(b => b.Exports)
+            .WithOne(e => e.Branch)
+            .HasForeignKey(e => e.BranchId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+       
+        modelBuilder.Entity<BranchEntity>()
+            .HasOne(b => b.Company)
+            .WithMany()
+            .HasForeignKey(b => b.CompanyId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<BranchEntity>()
+            .HasOne(b => b.Currency)
+            .WithMany()
+            .HasForeignKey(b => b.CurrencyId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<BranchEntity>()
+            .HasOne(b => b.Country)
+            .WithMany()
+            .HasForeignKey(b => b.CountryId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<BranchEntity>()
+            .HasOne(b => b.Bank)
+            .WithMany()
+            .HasForeignKey(b => b.BankId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<BranchEntity>()
+            .HasOne(b => b.Invoice)
+            .WithMany()
+            .HasForeignKey(b => b.InvoiceId)
+            .OnDelete(DeleteBehavior.Restrict);
+
 
         base.OnModelCreating(modelBuilder);
     }
