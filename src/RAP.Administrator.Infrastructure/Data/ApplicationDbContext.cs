@@ -8,6 +8,7 @@ using RAP.Administrator.Domain.Models.Document;
 using RAP.Administrator.Domain.Models.DocumentType;
 using RAP.Administrator.Domain.Models.EmployeeContract;
 using RAP.Administrator.Domain.Models.Insurance;
+using RAP.Administrator.Domain.Models.Loan;
 using RAP.Administrator.Domain.Models.LoanType;
 using RAP.Administrator.Domain.Models.ProjectContract;
 using RAP.Administrator.Domain.Models.ProjectContractType;
@@ -151,12 +152,30 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<ProjectContractEntity.ContractTypeList> ProjectContractContractTypeLists { get; set; }
 
+    // Loan Tables
+    public DbSet<LoanEntity> Loans { get; set; }
+    public DbSet<LoanLocalization> LoanLocalizations { get; set; }
+    public DbSet<LoanAudit> LoanAudits { get; set; }
+    public DbSet<LoanExport> LoanExports { get; set; }
+
+    public DbSet<AuthorityEntity> LoansAuthority { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Table mappings
 
-       //ProjectContract
+        // Loan Tables
+        modelBuilder.Entity<LoanEntity>().ToTable("Loans");
+        modelBuilder.Entity<LoanLocalization>().ToTable("LoanLocalizations");
+        modelBuilder.Entity<LoanAudit>().ToTable("LoanAudits");
+        modelBuilder.Entity<LoanExport>().ToTable("LoanExports");
+
+        // Authority (Permitted By)
+        modelBuilder.Entity<AuthorityEntity>().ToTable("LoansAuthority");
+
+
+
+        //ProjectContract
         modelBuilder.Entity<ProjectContractEntity>().ToTable("ProjectContracts");
         modelBuilder.Entity<ProjectContractLocalization>().ToTable("ProjectContractLocalizations");
         modelBuilder.Entity<ProjectContractAudit>().ToTable("ProjectContractAudits");
@@ -271,9 +290,17 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<LoanTypeLocalization>().ToTable("LoanTypeLocalizations");
         modelBuilder.Entity<LoanTypeAudit>().ToTable("LoanTypeAudits");
         modelBuilder.Entity<LoanTypeExport>().ToTable("LoanTypeExports");
-        // Primary Keys
 
-    
+
+        // Primary Keys
+        modelBuilder.Entity<LoanEntity>().HasKey(l => l.Id);
+        modelBuilder.Entity<LoanLocalization>().HasKey(l => l.Id);
+        modelBuilder.Entity<LoanAudit>().HasKey(a => a.Id);
+        modelBuilder.Entity<LoanExport>().HasKey(e => e.Id);
+        modelBuilder.Entity<AuthorityEntity>().HasKey(a => a.Id);
+       
+
+
         modelBuilder.Entity<ProjectContractTypeEntity>().HasKey(p => p.Id);
         modelBuilder.Entity<ProjectContractTypeLocalization>().HasKey(l => l.Id);
         modelBuilder.Entity<ProjectContractTypeAudit>().HasKey(a => a.Id);
@@ -786,6 +813,41 @@ public class ApplicationDbContext : DbContext
             .WithOne(e => e.ProjectContract)
             .HasForeignKey(e => e.ProjectContractId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        // Loan 
+        modelBuilder.Entity<LoanEntity>()
+            .HasMany(l => l.Localizations)
+            .WithOne(loc => loc.Loan)
+            .HasForeignKey(loc => loc.LoanId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+       
+        modelBuilder.Entity<LoanEntity>()
+            .HasMany(l => l.Audits)
+            .WithOne(a => a.Loan)
+            .HasForeignKey(a => a.LoanId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+       
+        modelBuilder.Entity<LoanEntity>()
+            .HasMany(l => l.Exports)
+            .WithOne(e => e.Loan)
+            .HasForeignKey(e => e.LoanId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+       
+        modelBuilder.Entity<LoanEntity>()
+            .HasOne(l => l.Authority)
+            .WithMany(a => a.Loans)
+            .HasForeignKey(l => l.PermittedById)
+            .OnDelete(DeleteBehavior.Restrict);
+
+     
+        modelBuilder.Entity<LoanEntity>()
+            .HasOne<TransferIqamaEntity>()   
+            .WithMany()
+            .HasForeignKey(l => l.IqmaId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         base.OnModelCreating(modelBuilder);
     }

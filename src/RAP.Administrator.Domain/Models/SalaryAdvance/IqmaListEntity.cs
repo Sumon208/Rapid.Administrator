@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RAP.Administrator.Domain.Models.Loan;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,5 +14,7 @@ namespace RAP.Administrator.Domain.Models.SalaryAdvance
 
       
         public virtual ICollection<SalaryAdvanceEntity>? SalaryAdvances { get; set; }
+        public virtual ICollection<LoanEntity>? Loans { get; set; }
+
     }
 }
