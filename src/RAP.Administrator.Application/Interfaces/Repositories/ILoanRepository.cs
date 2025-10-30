@@ -17,7 +17,7 @@ namespace RAP.Administrator.Application.Interfaces.Repositories
         Task<bool> DeleteAsync(long id, int userId, string language);
         Task<IEnumerable<LoanEntity>> GetTemplateDataAsync();
         Task<IEnumerable<string>> GetAllGalleryAsync();
-        Task<IEnumerable<LoanAudit>> GetAllAuditsAsync(long loanId);
+        Task<IEnumerable<LoanAudit>> GetAllAuditsAsync(int loanId);
 
     }
 }

@@ -11,13 +11,13 @@ namespace RAP.Administrator.Application.Interfaces.Services
     public interface ILoansService
     {
         Task<RequestResponse> GetAllAsync(string language, int pageNumber = 1, int pageSize = 10);
-        Task<RequestResponse> GetByIdAsync(long id);
+        Task<RequestResponse> GetByIdAsync(int id);
         Task<RequestResponse> CreateAsync(LoanEntity entity, int userId, string language);
         Task<RequestResponse> CreateBulkAsync(IEnumerable<LoanEntity> entities, int userId, string language);
         Task<RequestResponse> UpdateAsync(LoanEntity entity, int userId, string language);
-        Task<RequestResponse> DeleteAsync(long id, int userId, string language);
+        Task<RequestResponse> DeleteAsync(int id, int userId, string language);
         Task<RequestResponse> GetTemplateDataAsync();
         Task<RequestResponse> GetAllGalleryAsync();
-        Task<RequestResponse> GetAllAuditsAsync(long loanId);
+        Task<RequestResponse> GetAllAuditsAsync(int loanId);
     }
 }

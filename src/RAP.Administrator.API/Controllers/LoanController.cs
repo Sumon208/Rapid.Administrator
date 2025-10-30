@@ -4,6 +4,7 @@ using RAP.Administrator.Application.DTOs.LoanDTOs;
 using RAP.Administrator.Application.DTOs.Shared;
 using RAP.Administrator.Application.Interfaces.Services;
 using RAP.Administrator.Domain.Models.Loan;
+using RAP.Administrator.Infrastructure.Services;
 
 namespace RAP.Administrator.API.Controllers
 {
@@ -66,7 +67,7 @@ namespace RAP.Administrator.API.Controllers
         }
 
         [HttpGet("GetSingle")]
-        public async Task<IActionResult> GetSingle([FromQuery] long id)
+        public async Task<IActionResult> GetSingle([FromQuery] int id)
         {
             var response = await _loanService.GetByIdAsync(id);
             if (!response.IsSuccess)
@@ -117,6 +118,7 @@ namespace RAP.Administrator.API.Controllers
 
             var entity = new LoanEntity
             {
+                // Do NOT set Id here
                 Date = dto.Date,
                 ApprovedDate = dto.ApprovedDate,
                 RepaymentFrom = dto.RepaymentFrom,
@@ -134,7 +136,6 @@ namespace RAP.Administrator.API.Controllers
                 IsDraft = dto.IsDraft,
                 Localizations = dto.Localizations?.Select(l => new LoanLocalization
                 {
-                    LoanId = l.LoanId,
                     LanguageId = l.LanguageId,
                     Name = l.Name
                 }).ToList(),
@@ -145,14 +146,16 @@ namespace RAP.Administrator.API.Controllers
             if (!response.IsSuccess)
                 return StatusCode(int.Parse(response.StatusCode), response.Message);
 
-            return Ok(new { Message = response.Message, Id = ((LoanEntity)response.Data).Id });
+            return Ok(new { Message = response.Message, Id = entity.Id });
         }
+
 
         [HttpPost("CreateBulk")]
         public async Task<IActionResult> CreateBulk([FromBody] List<LoanCreateDTO> dtos, [FromQuery] int userId, [FromQuery] string language = "en")
         {
             var entities = dtos.Select(dto => new LoanEntity
             {
+                // Do NOT set Id
                 Date = dto.Date,
                 ApprovedDate = dto.ApprovedDate,
                 RepaymentFrom = dto.RepaymentFrom,
@@ -170,11 +173,10 @@ namespace RAP.Administrator.API.Controllers
                 IsDraft = dto.IsDraft,
                 Localizations = dto.Localizations?.Select(l => new LoanLocalization
                 {
-                    LoanId = l.LoanId,
                     LanguageId = l.LanguageId,
                     Name = l.Name
                 }).ToList(),
-               
+              
             }).ToList();
 
             var response = await _loanService.CreateBulkAsync(entities, userId, language);
@@ -183,6 +185,7 @@ namespace RAP.Administrator.API.Controllers
 
             return Ok(new { Message = response.Message, CreatedCount = response.Data });
         }
+
 
         [HttpPut("Update")]
         public async Task<IActionResult> Update([FromBody] LoanUpdateDTO dto, [FromQuery] int userId, [FromQuery] string language = "en")
@@ -223,7 +226,7 @@ namespace RAP.Administrator.API.Controllers
         }
 
         [HttpDelete("Delete")]
-        public async Task<IActionResult> Delete([FromQuery] long id, [FromQuery] int userId, [FromQuery] string language = "en")
+        public async Task<IActionResult> Delete([FromQuery] int id, [FromQuery] int userId, [FromQuery] string language = "en")
         {
             var response = await _loanService.DeleteAsync(id, userId, language);
             if (!response.IsSuccess)
@@ -253,7 +256,7 @@ namespace RAP.Administrator.API.Controllers
         }
 
         [HttpGet("GetAllAudits")]
-        public async Task<IActionResult> GetAllAudits([FromQuery] long loanId)
+        public async Task<IActionResult> GetAllAudits([FromQuery] int loanId)
         {
             var response = await _loanService.GetAllAuditsAsync(loanId);
             if (!response.IsSuccess)

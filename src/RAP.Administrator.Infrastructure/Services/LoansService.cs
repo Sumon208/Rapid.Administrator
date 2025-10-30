@@ -44,7 +44,7 @@ namespace RAP.Administrator.Infrastructure.Services
             }
         }
 
-        public async Task<RequestResponse> GetByIdAsync(long id)
+        public async Task<RequestResponse> GetByIdAsync(int id)
         {
             try
             {
@@ -159,7 +159,7 @@ namespace RAP.Administrator.Infrastructure.Services
             }
         }
 
-        public async Task<RequestResponse> DeleteAsync(long id, int userId, string language)
+        public async Task<RequestResponse> DeleteAsync(int id, int userId, string language)
         {
             try
             {
@@ -239,7 +239,7 @@ namespace RAP.Administrator.Infrastructure.Services
             }
         }
 
-        public async Task<RequestResponse> GetAllAuditsAsync(long loanId)
+        public async Task<RequestResponse> GetAllAuditsAsync(int loanId)
         {
             try
             {

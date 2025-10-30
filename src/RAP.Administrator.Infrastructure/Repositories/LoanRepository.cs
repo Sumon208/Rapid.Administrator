@@ -44,14 +44,21 @@ namespace RAP.Administrator.Infrastructure.Repositories
 
         public async Task<LoanEntity> CreateAsync(LoanEntity entity, int userId, string language)
         {
+           
+            entity.Id = 0; 
+
             _context.Loans.Add(entity);
             await _context.SaveChangesAsync();
+
             await AddAuditAsync(entity.Id, userId, "Create");
             return entity;
         }
-
         public async Task<int> CreateBulkAsync(IEnumerable<LoanEntity> entities, int userId, string language)
         {
+           
+            foreach (var entity in entities)
+                entity.Id = 0;
+
             _context.Loans.AddRange(entities);
             await _context.SaveChangesAsync();
 
@@ -60,6 +67,8 @@ namespace RAP.Administrator.Infrastructure.Repositories
 
             return entities.Count();
         }
+
+
 
         public async Task<bool> UpdateAsync(LoanEntity entity, int userId, string language)
         {
@@ -117,7 +126,7 @@ namespace RAP.Administrator.Infrastructure.Repositories
             return new List<string>();
         }
 
-        public async Task<IEnumerable<LoanAudit>> GetAllAuditsAsync(long loanId)
+        public async Task<IEnumerable<LoanAudit>> GetAllAuditsAsync(int loanId)
         {
             return await _context.LoanAudits
                 .AsNoTracking()
@@ -125,7 +134,7 @@ namespace RAP.Administrator.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        private async Task AddAuditAsync(long loanId, int userId, string actionTypeName)
+        private async Task AddAuditAsync(int loanId, int userId, string actionTypeName)
         {
             var loan = await _context.Loans.FindAsync(loanId);
             if (loan == null)
@@ -133,15 +142,17 @@ namespace RAP.Administrator.Infrastructure.Repositories
 
             var audit = new LoanAudit
             {
-              
+                LoanId = loanId,
                 ActionUserId = userId,
-              
-                IsDefault = loan.IsDefault
+                ActionTypeId = MapActionType(actionTypeName),
+                IsDefault = loan.IsDefault,
+                ActionUserAt = DateTime.UtcNow
             };
 
             _context.LoanAudits.Add(audit);
             await _context.SaveChangesAsync();
         }
+
 
         private short MapActionType(string action) => action switch
         {
