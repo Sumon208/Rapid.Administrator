@@ -20,10 +20,12 @@ namespace RAP.Administrator.API.Controllers
             _sampleCategoryService = sampleCategoryService;
         }
 
+
         [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAll([FromQuery] string language = "en", [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetAll([FromQuery] string language = "en", [FromQuery] int skip = 0,[FromQuery] int take = 10)
         {
-            var response = await _sampleCategoryService.GetAllAsync(language, pageNumber, pageSize);
+            var response = await _sampleCategoryService.GetAllAsync(language, skip, take);
+
             if (!response.IsSuccess)
                 return StatusCode(int.Parse(response.StatusCode), response.Message);
 
@@ -62,10 +64,11 @@ namespace RAP.Administrator.API.Controllers
                     Longitude = a.Longitude
                 }).ToList()
             }).ToList();
-          
 
             return Ok(new { TotalCount = pagedData.TotalCount, Data = result });
         }
+
+
 
         [HttpGet("GetSingle")]
         public async Task<IActionResult> GetSingle([FromQuery] int id)

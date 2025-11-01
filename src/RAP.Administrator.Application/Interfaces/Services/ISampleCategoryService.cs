@@ -10,7 +10,8 @@ namespace RAP.Administrator.Application.Interfaces.Services
 {
     public interface ISampleCategoryService
     {
-        Task<RequestResponse> GetAllAsync(string language, int pageNumber = 1, int pageSize = 10);
+        //Task<RequestResponse> GetAllAsync(string language, int pageNumber = 1, int pageSize = 10);
+        Task<RequestResponse> GetAllAsync(string language, int skip = 0, int take = 10);
         Task<RequestResponse> GetByIdAsync(int id);
         Task<RequestResponse> CreateAsync(SampleCategoryEntity entity, int userId, string language);
         Task<RequestResponse> CreateBulkAsync(IEnumerable<SampleCategoryEntity> entities, int userId, string language);

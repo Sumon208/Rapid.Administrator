@@ -18,11 +18,12 @@ namespace RAP.Administrator.Infrastructure.Services
             _sampleCategoryRepository = sampleCategoryRepository;
         }
 
-        public async Task<RequestResponse> GetAllAsync(string language, int pageNumber = 1, int pageSize = 10)
+      
+        public async Task<RequestResponse> GetAllAsync(string language, int skip = 0, int take = 10)
         {
             try
             {
-                var (data, totalCount) = await _sampleCategoryRepository.GetAllAsync(language, pageNumber, pageSize);
+                var (data, totalCount) = await _sampleCategoryRepository.GetAllAsync(language, skip, take);
                 return new RequestResponse
                 {
                     StatusCode = "200",
@@ -45,6 +46,8 @@ namespace RAP.Administrator.Infrastructure.Services
                 };
             }
         }
+
+
 
         public async Task<RequestResponse> GetByIdAsync(int id)
         {

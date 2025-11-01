@@ -4,9 +4,10 @@ namespace RAP.Administrator.Application.Interfaces.Repositories
 {
     public interface ISampleCategoryRepository
     {
+        //Task<(IEnumerable<SampleCategoryEntity> Data, int TotalCount)> GetAllAsync(
+        //    string language, int pageNumber = 1, int pageSize = 10);
         Task<(IEnumerable<SampleCategoryEntity> Data, int TotalCount)> GetAllAsync(
-            string language, int pageNumber = 1, int pageSize = 10);
-
+              string language, int skip, int take);
         Task<SampleCategoryEntity?> GetByIdAsync(int id);
 
         Task<SampleCategoryEntity> CreateAsync(SampleCategoryEntity entity, int userId, string language);

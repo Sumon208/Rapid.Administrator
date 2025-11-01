@@ -13,23 +13,29 @@ namespace RAP.Administrator.Infrastructure.Repositories
             _context = context;
         }
 
+      
         public async Task<(IEnumerable<SampleCategoryEntity> Data, int TotalCount)> GetAllAsync(
-            string language, int pageNumber = 1, int pageSize = 10)
+       string language, int skip, int take)
         {
+           
             var query = _context.SampleCategories
-                .Include(c => c.Localizations)
-                .AsNoTracking()
-                .OrderByDescending(c => c.Id);
+                .Include(c => c.Localizations)   
+                .AsNoTracking()                  
+                .OrderByDescending(c => c.Id);   
 
+            
             int totalCount = await query.CountAsync();
 
+           
             var data = await query
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize > 0 ? pageSize : totalCount)
+                .Skip(skip)
+                .Take(take > 0 ? take : totalCount) 
                 .ToListAsync();
 
             return (data, totalCount);
         }
+
+
 
         public async Task<SampleCategoryEntity?> GetByIdAsync(int id)
         {
