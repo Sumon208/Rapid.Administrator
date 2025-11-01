@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace RAP.Administrator.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251101101731_AddSampleReceivings")]
+    partial class AddSampleReceivings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -665,183 +668,6 @@ namespace RAP.Administrator.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CandidateTeams", (string)null);
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.Certificate.CertificateAuditEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("ActionTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("ActionUserAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("ActionUserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Browser")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("CertificateId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Dail")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IP")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool?>("IsDefault")
-                        .HasColumnType("bit");
-
-                    b.Property<decimal?>("Latitude")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Location")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("Longitude")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("MapURL")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("OS")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool?>("StatusId")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CertificateId");
-
-                    b.ToTable("CertificateAudits", (string)null);
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.Certificate.CertificateEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ActionTypeName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CertificateNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("CertificateTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("EmployeeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("GeneralManager")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LabManager")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CertificateTypeId");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.ToTable("Certificates", (string)null);
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.Certificate.CertificateExportEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CertificateId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("ExportedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("ExportedBy")
-                        .HasColumnType("int");
-
-                    b.Property<string>("FileName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FilePath")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FileType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CertificateId");
-
-                    b.ToTable("CertificateExports", (string)null);
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.Certificate.CertificateLocalizationEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CertificateId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("LanguageId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CertificateId");
-
-                    b.ToTable("CertificateLocalizations", (string)null);
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.Certificate.CertificateTypeListEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CertificateTypeLists", (string)null);
                 });
 
             modelBuilder.Entity("RAP.Administrator.Domain.Models.ContactType.ContactTypeAuditEntity", b =>
@@ -4230,53 +4056,6 @@ namespace RAP.Administrator.Infrastructure.Migrations
                     b.Navigation("Candidate");
                 });
 
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.Certificate.CertificateAuditEntity", b =>
-                {
-                    b.HasOne("RAP.Administrator.Domain.Models.Certificate.CertificateEntity", "Certificate")
-                        .WithMany("Audits")
-                        .HasForeignKey("CertificateId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("Certificate");
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.Certificate.CertificateEntity", b =>
-                {
-                    b.HasOne("RAP.Administrator.Domain.Models.Certificate.CertificateTypeListEntity", "CertificateType")
-                        .WithMany("Certificates")
-                        .HasForeignKey("CertificateTypeId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("RAP.Administrator.Domain.Models.Insurance.EmployeeEntity", "Employee")
-                        .WithMany("Certificates")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CertificateType");
-
-                    b.Navigation("Employee");
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.Certificate.CertificateExportEntity", b =>
-                {
-                    b.HasOne("RAP.Administrator.Domain.Models.Certificate.CertificateEntity", "Certificate")
-                        .WithMany("Exports")
-                        .HasForeignKey("CertificateId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("Certificate");
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.Certificate.CertificateLocalizationEntity", b =>
-                {
-                    b.HasOne("RAP.Administrator.Domain.Models.Certificate.CertificateEntity", "Certificate")
-                        .WithMany("Localizations")
-                        .HasForeignKey("CertificateId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("Certificate");
-                });
-
             modelBuilder.Entity("RAP.Administrator.Domain.Models.ContactType.ContactTypeAuditEntity", b =>
                 {
                     b.HasOne("RAP.Administrator.Domain.Models.ContactType.ContactTypeEntity", null)
@@ -5072,20 +4851,6 @@ namespace RAP.Administrator.Infrastructure.Migrations
                     b.Navigation("CandidateSelections");
                 });
 
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.Certificate.CertificateEntity", b =>
-                {
-                    b.Navigation("Audits");
-
-                    b.Navigation("Exports");
-
-                    b.Navigation("Localizations");
-                });
-
-            modelBuilder.Entity("RAP.Administrator.Domain.Models.Certificate.CertificateTypeListEntity", b =>
-                {
-                    b.Navigation("Certificates");
-                });
-
             modelBuilder.Entity("RAP.Administrator.Domain.Models.ContactType.ContactTypeEntity", b =>
                 {
                     b.Navigation("Audits");
@@ -5159,8 +4924,6 @@ namespace RAP.Administrator.Infrastructure.Migrations
 
             modelBuilder.Entity("RAP.Administrator.Domain.Models.Insurance.EmployeeEntity", b =>
                 {
-                    b.Navigation("Certificates");
-
                     b.Navigation("EmployeeContracts");
 
                     b.Navigation("Insurances");

@@ -1,4 +1,5 @@
-﻿using RAP.Administrator.Domain.Models.EmployeeContract;
+﻿using RAP.Administrator.Domain.Models.Certificate;
+using RAP.Administrator.Domain.Models.EmployeeContract;
 using RAP.Administrator.Domain.Models.Retirement;
 using RAP.Administrator.Domain.Models.SafetyMaterials;
 using System;
@@ -19,5 +20,7 @@ namespace RAP.Administrator.Domain.Models.Insurance
         public ICollection<RetirementEntity> Retirement { get; set; } = new List<RetirementEntity>();
         public ICollection<EmployeeContractEntity>? EmployeeContracts { get; set; }
         public ICollection<SafetyMaterialsEntity>? SafetyMaterials { get; set; }
+
+        public ICollection<CertificateEntity>? Certificates { get; set; }
     }
 }

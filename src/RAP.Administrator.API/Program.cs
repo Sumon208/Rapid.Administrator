@@ -2,14 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using RAP.Administrator.Application.Interfaces.Repositories;
 using RAP.Administrator.Application.Interfaces.Services;
-
 using RAP.Administrator.Infrastructure.Repositories;
 using RAP.Administrator.Infrastructure.Services;
 
-
 var builder = WebApplication.CreateBuilder(args);
-
-
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -18,6 +14,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
+builder.Services.AddScoped<ICertificateService, CertificateService>();
+builder.Services.AddScoped<ICertificateRepository, CertificateRepository>();
+
+builder.Services.AddScoped<ISampleReceivingService, SampleReceivingService>();
+builder.Services.AddScoped<ISampleReceivingRepository, SampleReceivingRepository>();
 
 builder.Services.AddScoped<ISafetyMaterialsService, SafetyMaterialsService>();
 builder.Services.AddScoped<ISafetyMaterialsRepository, SafetyMaterialsRepository>();

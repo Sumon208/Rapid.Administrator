@@ -12,7 +12,8 @@ namespace RAP.Administrator.API.Controllers
     public class BranchController : ControllerBase
     {
         private readonly IBranchService _branchService;
-
+       
+         
         public BranchController(IBranchService branchService)
         {
             _branchService = branchService;

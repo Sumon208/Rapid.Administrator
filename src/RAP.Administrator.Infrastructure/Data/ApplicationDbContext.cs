@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using RAP.Administrator.Domain.Models.Branches;
 using RAP.Administrator.Domain.Models.CandidateList;
 using RAP.Administrator.Domain.Models.CandidateSelection;
+using RAP.Administrator.Domain.Models.Certificate;
 using RAP.Administrator.Domain.Models.ContactType;
 using RAP.Administrator.Domain.Models.Divisions;
 using RAP.Administrator.Domain.Models.Document;
@@ -17,9 +18,11 @@ using RAP.Administrator.Domain.Models.ProjectContractType;
 using RAP.Administrator.Domain.Models.Retirement;
 using RAP.Administrator.Domain.Models.SafetyMaterials;
 using RAP.Administrator.Domain.Models.SalaryAdvance;
+using RAP.Administrator.Domain.Models.SampleReceiving;
 using RAP.Administrator.Domain.Models.ShiftType;
 using RAP.Administrator.Domain.Models.Tax;
 using RAP.Administrator.Domain.Models.Transfer;
+using static Dapper.SqlMapper;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public class ApplicationDbContext : DbContext
@@ -33,6 +36,13 @@ public class ApplicationDbContext : DbContext
     public DbSet<BranchLocalization> BranchesLocalizations { get; set; }
     public DbSet<BranchAuditEntity> BranchesAudits { get; set; }
     public DbSet<BranchExport> BranchesExports { get; set; }
+
+    // Certificate Module DbSets
+    public DbSet<CertificateEntity> Certificates { get; set; }
+    public DbSet<CertificateTypeListEntity> CertificateTypes { get; set; }
+    public DbSet<CertificateAuditEntity> CertificateAudits { get; set; }
+    public DbSet<CertificateLocalizationEntity> CertificateLocalizations { get; set; }
+    public DbSet<CertificateExportEntity> CertificateExports { get; set; }
 
     // Branch Dropdowns
     public DbSet<CompanyListEntity> CompanyLists { get; set; }
@@ -182,7 +192,17 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<AuthorityEntity> LoansAuthority { get; set; }
 
-    
+    public DbSet<SampleReceivingEntity> SampleReceivings { get; set; }
+    public DbSet<SampleReceivedLocalizationEntity> SampleReceivedLocalizations { get; set; }
+    public DbSet<SampleReceivedAuditEntity> SampleReceivedAudits { get; set; }
+    public DbSet<SampleReceivedExportEntity> SampleReceivedExports { get; set; }
+
+    // Dropdown-related tables (some already exist)
+    public DbSet<CustomerListEntity> Customers { get; set; }
+    public DbSet<ReceiverListEntity> Receivers { get; set; }
+    public DbSet<DeliveredListEntity> DeliveredLists { get; set; }
+    public DbSet<SectionListEntity> Sections { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -192,8 +212,15 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<BranchLocalization>().ToTable("BranchesLocalizations");
         modelBuilder.Entity<BranchAuditEntity>().ToTable("BranchesAudits");
         modelBuilder.Entity<BranchExport>().ToTable("BranchesExports");
+        //certificate
+        modelBuilder.Entity<CertificateEntity>().ToTable("Certificates");
+        modelBuilder.Entity<CertificateTypeListEntity>().ToTable("CertificateTypeLists");
+        modelBuilder.Entity<CertificateAuditEntity>().ToTable("CertificateAudits");
+        modelBuilder.Entity<CertificateLocalizationEntity>().ToTable("CertificateLocalizations");
+        modelBuilder.Entity<CertificateExportEntity>().ToTable("CertificateExports");
 
 
+        //branches dropdown
         modelBuilder.Entity<CompanyListEntity>().ToTable("CompanyLists");
         modelBuilder.Entity<CurrencyListEntity>().ToTable("CurrencyLists");
         modelBuilder.Entity<BankListEntity>().ToTable("BankLists");
@@ -339,6 +366,18 @@ public class ApplicationDbContext : DbContext
         
         modelBuilder.Entity<BankListEntity>().ToTable("BankLists");
         modelBuilder.Entity<InvoiceFormatListEntity>().ToTable("InvoiceFormats");
+
+
+        // SampleReceiving 
+        modelBuilder.Entity<SampleReceivingEntity>().ToTable("SampleReceivings");
+        modelBuilder.Entity<SampleReceivedLocalizationEntity>().ToTable("SampleReceivedLocalizations");
+        modelBuilder.Entity<SampleReceivedAuditEntity>().ToTable("SampleReceivedAudits");
+        modelBuilder.Entity<SampleReceivedExportEntity>().ToTable("SampleReceivedExports");
+
+        modelBuilder.Entity<CustomerListEntity>().ToTable("CustomerLists");
+        modelBuilder.Entity<ReceiverListEntity>().ToTable("ReceiverLists");
+        modelBuilder.Entity<DeliveredListEntity>().ToTable("DeliveredLists");
+        modelBuilder.Entity<SectionListEntity>().ToTable("SectionLists");
 
         // Primary Keys
 
@@ -487,7 +526,23 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<RAP.Administrator.Domain.Models.SafetyMaterials.SafetyMaterialsExportEntity>().HasKey(e => e.Id);
         modelBuilder.Entity<DurationEntity>().HasKey(d => d.Id);
 
-       
+        //  SampleReceiving 
+        modelBuilder.Entity<SampleReceivingEntity>().HasKey(e => e.Id);
+        modelBuilder.Entity<SampleReceivedLocalizationEntity>().HasKey(e => e.Id);
+        modelBuilder.Entity<SampleReceivedAuditEntity>().HasKey(e => e.Id);
+        modelBuilder.Entity<SampleReceivedExportEntity>().HasKey(e => e.Id);
+
+     
+        modelBuilder.Entity<CustomerListEntity>().HasKey(e => e.Id);
+        modelBuilder.Entity<ReceiverListEntity>().HasKey(e => e.Id);
+        modelBuilder.Entity<DeliveredListEntity>().HasKey(e => e.Id);
+        modelBuilder.Entity<SectionListEntity>().HasKey(e => e.Id);
+        // Certificates Keys
+        modelBuilder.Entity<CertificateEntity>().HasKey(c => c.Id);
+        modelBuilder.Entity<CertificateTypeListEntity>().HasKey(ct => ct.Id);
+        modelBuilder.Entity<CertificateAuditEntity>().HasKey(a => a.Id);
+        modelBuilder.Entity<CertificateLocalizationEntity>().HasKey(l => l.Id);
+        modelBuilder.Entity<CertificateExportEntity>().HasKey(e => e.Id);
 
         modelBuilder.Entity<TaxEntity>()
             .Property(t => t.OpeningBalance)
@@ -540,10 +595,10 @@ public class ApplicationDbContext : DbContext
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<CandidateEntity>()
- .HasMany(c => c.Localizations)
- .WithOne(l => l.Candidate)
- .HasForeignKey(l => l.CandidateId)
- .OnDelete(DeleteBehavior.Cascade);
+             .HasMany(c => c.Localizations)
+             .WithOne(l => l.Candidate)
+             .HasForeignKey(l => l.CandidateId)
+             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<CandidateEntity>()
             .HasMany(c => c.Audits)
@@ -957,10 +1012,10 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(l => l.IqmaId)
             .OnDelete(DeleteBehavior.Restrict);
         // Branch -> Children
-        // ======================
+      
         modelBuilder.Entity<BranchEntity>()
             .HasMany(b => b.Localizations)
-            .WithOne(l => l.Branch)   // single navigation in child
+            .WithOne(l => l.Branch) 
             .HasForeignKey(l => l.BranchId)
             .OnDelete(DeleteBehavior.Cascade);
 
@@ -1006,8 +1061,90 @@ public class ApplicationDbContext : DbContext
             .WithMany()
             .HasForeignKey(b => b.InvoiceId)
             .OnDelete(DeleteBehavior.Restrict);
+        // Relations: SampleReceiving
+        modelBuilder.Entity<SampleReceivingEntity>()
+            .HasMany(r => r.Localizations)
+            .WithOne(l => l.SampleReceivings)
+            .HasForeignKey(l => l.ReceivedId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<SampleReceivingEntity>()
+            .HasMany(r => r.Audits)
+            .WithOne(a => a.SampleReceivings)
+            .HasForeignKey(a => a.ReceivedId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<SampleReceivingEntity>()
+            .HasMany(r => r.Exports)
+            .WithOne(e => e.SampleReceivings)
+            .HasForeignKey(e => e.ReceivedId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Dropdown  SampleReceiving
+        modelBuilder.Entity<SampleReceivingEntity>()
+            .HasOne(r => r.Customer)
+            .WithMany()
+            .HasForeignKey(r => r.CustomerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<SampleReceivingEntity>()
+            .HasOne(r => r.Branch)
+            .WithMany()
+            .HasForeignKey(r => r.BranchId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<SampleReceivingEntity>()
+            .HasOne(r => r.ReceivedBy)
+            .WithMany()
+            .HasForeignKey(r => r.ReceivedById)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<SampleReceivingEntity>()
+            .HasOne(r => r.DeliveredBy)
+            .WithMany()
+            .HasForeignKey(r => r.DeliveredById)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<SampleReceivingEntity>()
+            .HasOne(r => r.Section)
+            .WithMany()
+            .HasForeignKey(r => r.SectionId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Certificate
+        modelBuilder.Entity<CertificateEntity>()
+            .HasMany(c => c.Localizations)
+            .WithOne(l => l.Certificate)
+            .HasForeignKey(l => l.CertificateId)
+            .OnDelete(DeleteBehavior.Cascade);
 
 
+        modelBuilder.Entity<CertificateEntity>()
+            .HasMany(c => c.Audits)
+            .WithOne(a => a.Certificate)
+            .HasForeignKey(a => a.CertificateId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+      
+        modelBuilder.Entity<CertificateEntity>()
+            .HasMany(c => c.Exports)
+            .WithOne(e => e.Certificate)
+            .HasForeignKey(e => e.CertificateId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+     
+        modelBuilder.Entity<CertificateEntity>()
+            .HasOne(c => c.CertificateType)
+            .WithMany(ct => ct.Certificates)
+            .HasForeignKey(c => c.CertificateTypeId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+       
+        modelBuilder.Entity<CertificateEntity>()
+            .HasOne(c => c.Employee)
+            .WithMany(e => e.Certificates)
+            .HasForeignKey(c => c.EmployeeId)
+            .OnDelete(DeleteBehavior.Restrict);
         base.OnModelCreating(modelBuilder);
     }
 }
