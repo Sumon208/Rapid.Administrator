@@ -18,6 +18,7 @@ using RAP.Administrator.Domain.Models.ProjectContractType;
 using RAP.Administrator.Domain.Models.Retirement;
 using RAP.Administrator.Domain.Models.SafetyMaterials;
 using RAP.Administrator.Domain.Models.SalaryAdvance;
+using RAP.Administrator.Domain.Models.SampleCategory;
 using RAP.Administrator.Domain.Models.SampleReceiving;
 using RAP.Administrator.Domain.Models.ShiftType;
 using RAP.Administrator.Domain.Models.Tax;
@@ -57,12 +58,21 @@ public class ApplicationDbContext : DbContext
     public DbSet<SafetyMaterialsExportEntity> SafetyMaterialsExports { get; set; }
     public DbSet<DurationEntity> Durations { get; set; }
 
+
     public DbSet<EmployeeContractEntity> EmployeeContracts { get; set; }
     public DbSet<EmployeeContractLocalization> EmployeeContractLocalizations { get; set; }
     public DbSet<EmployeeContractAudit> EmployeeContractAudits { get; set; }
     // Tax Tables
     public DbSet<TaxEntity> Taxes { get; set; }
     public DbSet<TaxAuditEntity> TaxAudits { get; set; }
+
+
+    // DbSets in your DbContext
+    public DbSet<SampleCategoryEntity> SampleCategories { get; set; }
+    public DbSet<SampleCategoryLocalization> SampleCategoryLocalizations { get; set; }
+    public DbSet<SampleCategoryAudit> SampleCategoryAudits { get; set; }
+    public DbSet<SampleCategoryExport> SampleCategoryExports { get; set; }
+
 
     // Division Tables
     public DbSet<Division> Divisions { get; set; }
@@ -378,7 +388,11 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<ReceiverListEntity>().ToTable("ReceiverLists");
         modelBuilder.Entity<DeliveredListEntity>().ToTable("DeliveredLists");
         modelBuilder.Entity<SectionListEntity>().ToTable("SectionLists");
-
+        //sample Category
+        modelBuilder.Entity<SampleCategoryEntity>().ToTable("SampleCategories");
+        modelBuilder.Entity<SampleCategoryLocalization>().ToTable("SampleCategoryLocalizations");
+        modelBuilder.Entity<SampleCategoryAudit>().ToTable("SampleCategoryAudits");
+        modelBuilder.Entity<SampleCategoryExport>().ToTable("SampleCategoryExports");
         // Primary Keys
 
         modelBuilder.Entity<BranchEntity>().HasKey(b => b.Id);
@@ -543,7 +557,12 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<CertificateAuditEntity>().HasKey(a => a.Id);
         modelBuilder.Entity<CertificateLocalizationEntity>().HasKey(l => l.Id);
         modelBuilder.Entity<CertificateExportEntity>().HasKey(e => e.Id);
-
+        //sample category
+        modelBuilder.Entity<SampleCategoryEntity>().HasKey(e => e.Id);
+        modelBuilder.Entity<SampleCategoryLocalization>().HasKey(l => l.Id);
+        modelBuilder.Entity<SampleCategoryAudit>().HasKey(a => a.Id);
+        modelBuilder.Entity<SampleCategoryExport>().HasKey(ex => ex.Id);
+         
         modelBuilder.Entity<TaxEntity>()
             .Property(t => t.OpeningBalance)
             .HasColumnType("decimal(18,4)"); 
@@ -1145,6 +1164,25 @@ public class ApplicationDbContext : DbContext
             .WithMany(e => e.Certificates)
             .HasForeignKey(c => c.EmployeeId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<SampleCategoryEntity>()
+            .HasMany(e => e.Localizations)
+            .WithOne(l => l.SampleCategories)
+            .HasForeignKey(l => l.CategoryId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<SampleCategoryEntity>()
+            .HasMany(e => e.Audits)
+            .WithOne(a => a.SampleCategories)
+            .HasForeignKey(a => a.CategoryId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<SampleCategoryEntity>()
+            .HasMany(e => e.Exports)
+            .WithOne(ex => ex.SampleCategories)
+            .HasForeignKey(ex => ex.CategoryId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         base.OnModelCreating(modelBuilder);
     }
 }

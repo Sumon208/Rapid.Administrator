@@ -18,6 +18,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<ICertificateService, CertificateService>();
 builder.Services.AddScoped<ICertificateRepository, CertificateRepository>();
 
+builder.Services.AddScoped<ISampleCategoryService, SampleCategoryService>();
+builder.Services.AddScoped<ISampleCategoryRepository, SampleCategoryRepository>();
+
 builder.Services.AddScoped<ISampleReceivingService, SampleReceivingService>();
 builder.Services.AddScoped<ISampleReceivingRepository, SampleReceivingRepository>();
 
